@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gestor_pdv/categoria/data/providers/firebase/categoria_service.dart';
-import 'package:gestor_pdv/produto/data/providers/firebase/produto_service.dart';
-import 'package:gestor_pdv/produto/domain/enum/unidade_medida.dart';
+import 'package:gestor_vendas/categoria/data/providers/firebase/categoria_service.dart';
+import 'package:gestor_vendas/produto/data/providers/firebase/produto_service.dart';
+import 'package:gestor_vendas/produto/domain/enum/unidade_medida.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 

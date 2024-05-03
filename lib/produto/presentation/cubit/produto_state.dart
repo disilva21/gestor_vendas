@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gestor_pdv/common/base_state.dart';
+import 'package:gestor_vendas/common/base_state.dart';
 
 class ProdutoState extends BaseState {
   ProdutoState({

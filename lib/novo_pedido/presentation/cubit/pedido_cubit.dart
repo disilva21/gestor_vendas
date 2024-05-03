@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gestor_pdv/novo_pedido/data/providers/firebase/cliente_service.dart';
-import 'package:gestor_pdv/novo_pedido/data/providers/firebase/formapagamento_service.dart';
-import 'package:gestor_pdv/novo_pedido/data/providers/firebase/item_pedido_service.dart';
-import 'package:gestor_pdv/novo_pedido/data/providers/firebase/pedido_service.dart';
-import 'package:gestor_pdv/novo_pedido/domain/entities/cliente.dart';
-import 'package:gestor_pdv/novo_pedido/domain/entities/forma_pagamento.dart';
-import 'package:gestor_pdv/novo_pedido/domain/entities/item_pedido.dart';
-import 'package:gestor_pdv/novo_pedido/domain/entities/pedido.dart';
+import 'package:gestor_vendas/novo_pedido/data/providers/firebase/cliente_service.dart';
+import 'package:gestor_vendas/novo_pedido/data/providers/firebase/formapagamento_service.dart';
+import 'package:gestor_vendas/novo_pedido/data/providers/firebase/item_pedido_service.dart';
+import 'package:gestor_vendas/novo_pedido/data/providers/firebase/pedido_service.dart';
+import 'package:gestor_vendas/novo_pedido/domain/entities/cliente.dart';
+import 'package:gestor_vendas/novo_pedido/domain/entities/forma_pagamento.dart';
+import 'package:gestor_vendas/novo_pedido/domain/entities/item_pedido.dart';
+import 'package:gestor_vendas/novo_pedido/domain/entities/pedido.dart';
 
-import 'package:gestor_pdv/novo_pedido/presentation/cubit/pedido_state.dart';
-import 'package:gestor_pdv/produto/data/providers/firebase/produto_service.dart';
+import 'package:gestor_vendas/novo_pedido/presentation/cubit/pedido_state.dart';
+import 'package:gestor_vendas/produto/data/providers/firebase/produto_service.dart';
 
 import '../../../../util/validar_celular.dart';
 

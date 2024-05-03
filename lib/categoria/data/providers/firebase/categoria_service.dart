@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gestor_pdv/database/object_box_database.dart';
-import 'package:gestor_pdv/database/objectbox.g.dart';
+import 'package:gestor_vendas/database/object_box_database.dart';
+import 'package:gestor_vendas/database/objectbox.g.dart';
 
 import '../../../domain/entities/categoria.dart';
 

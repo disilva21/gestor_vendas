@@ -3,10 +3,10 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gestor_pdv/novo_pedido/presentation/cubit/pedido_state.dart';
-import 'package:gestor_pdv/produto/presentation/cubit/produto_cubit.dart';
-import 'package:gestor_pdv/widget/header_widget.dart';
-import 'package:gestor_pdv/widget/side_bar.dart';
+import 'package:gestor_vendas/novo_pedido/presentation/cubit/pedido_state.dart';
+import 'package:gestor_vendas/produto/presentation/cubit/produto_cubit.dart';
+import 'package:gestor_vendas/widget/header_widget.dart';
+import 'package:gestor_vendas/widget/side_bar.dart';
 
 import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';

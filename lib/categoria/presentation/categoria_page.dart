@@ -2,8 +2,8 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gestor_pdv/widget/header_widget.dart';
-import 'package:gestor_pdv/widget/side_bar.dart';
+import 'package:gestor_vendas/widget/header_widget.dart';
+import 'package:gestor_vendas/widget/side_bar.dart';
 
 import '../../components/modal_progress.dart';
 import '../domain/entities/categoria.dart';

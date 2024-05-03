@@ -3,8 +3,8 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gestor_pdv/components/modal_progress.dart';
-import 'package:gestor_pdv/produto/domain/entities/produto.dart';
+import 'package:gestor_vendas/components/modal_progress.dart';
+import 'package:gestor_vendas/produto/domain/entities/produto.dart';
 
 import '../../widget/header_widget.dart';
 import '../../widget/side_bar.dart';

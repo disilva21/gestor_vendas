@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gestor_pdv/database/object_box_database.dart';
-import 'package:gestor_pdv/database/objectbox.g.dart';
-import 'package:gestor_pdv/novo_pedido/domain/entities/cliente.dart';
+import 'package:gestor_vendas/database/object_box_database.dart';
+import 'package:gestor_vendas/database/objectbox.g.dart';
+import 'package:gestor_vendas/novo_pedido/domain/entities/cliente.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:objectbox/objectbox.dart';
 

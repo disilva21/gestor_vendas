@@ -1,6 +1,6 @@
 {
-    "name": "gestor_pdv",
-    "short_name": "gestor_pdv",
+    "name": "gestor_vendas",
+    "short_name": "gestor_vendas",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

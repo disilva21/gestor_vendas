@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gestor_pdv/produto/presentation/cubit/produto_state.dart';
+import 'package:gestor_vendas/produto/presentation/cubit/produto_state.dart';
 
 class ProdutoCadastroState extends ProdutoState {
   ProdutoCadastroState({

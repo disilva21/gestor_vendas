@@ -1,6 +1,6 @@
-import 'package:gestor_pdv/novo_pedido/domain/entities/cliente.dart';
-import 'package:gestor_pdv/novo_pedido/domain/entities/forma_pagamento.dart';
-import 'package:gestor_pdv/novo_pedido/domain/entities/item_pedido.dart';
+import 'package:gestor_vendas/novo_pedido/domain/entities/cliente.dart';
+import 'package:gestor_vendas/novo_pedido/domain/entities/forma_pagamento.dart';
+import 'package:gestor_vendas/novo_pedido/domain/entities/item_pedido.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:intl/intl.dart';
 

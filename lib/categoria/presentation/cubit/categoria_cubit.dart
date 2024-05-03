@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gestor_pdv/categoria/data/providers/firebase/categoria_service.dart';
+import 'package:gestor_vendas/categoria/data/providers/firebase/categoria_service.dart';
 
 import '../../../produto/data/providers/firebase/produto_service.dart';
 import '../../domain/entities/categoria.dart';

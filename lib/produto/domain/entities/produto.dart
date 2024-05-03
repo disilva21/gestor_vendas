@@ -1,6 +1,6 @@
 import 'dart:ffi';
 
-import 'package:gestor_pdv/categoria/domain/entities/categoria.dart';
+import 'package:gestor_vendas/categoria/domain/entities/categoria.dart';
 import 'package:intl/intl.dart';
 import 'package:objectbox/objectbox.dart';
 

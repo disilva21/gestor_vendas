@@ -1,4 +1,4 @@
-package com.example.gestor_pdv
+package com.example.gestor_vendas
 
 import io.flutter.embedding.android.FlutterActivity
 
