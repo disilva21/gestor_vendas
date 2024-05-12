@@ -1,7 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:gestor_vendas/database/object_box_database.dart';
-import 'package:gestor_vendas/novo_pedido/domain/entities/item_pedido.dart';
+import 'package:gestor_vendas/database_gestor/object_box_database.dart';
+
 import 'package:gestor_vendas/novo_pedido/domain/entities/pedido.dart';
 import 'package:objectbox/objectbox.dart';
 

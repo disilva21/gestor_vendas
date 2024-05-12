@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gestor_vendas/categoria/data/providers/firebase/categoria_service.dart';
-import 'package:gestor_vendas/database/objectbox.g.dart';
+
 import 'package:gestor_vendas/novo_pedido/data/providers/firebase/item_pedido_service.dart';
 import 'package:gestor_vendas/produto/data/providers/firebase/produto_service.dart';
 import 'package:gestor_vendas/produto/domain/enum/unidade_medida.dart';

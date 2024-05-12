@@ -26,43 +26,48 @@ export 'package:objectbox/objectbox.dart'; // so that callers only have to impor
 
 final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
-      id: const obx_int.IdUid(1, 2722655641931270354),
+      id: const obx_int.IdUid(1, 3904452162044211973),
       name: 'CategoriaEntity',
-      lastPropertyId: const obx_int.IdUid(7, 4126046193960883829),
+      lastPropertyId: const obx_int.IdUid(8, 7051242020462050057),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(1, 4237418261733591567),
+            id: const obx_int.IdUid(1, 7603360845135547914),
             name: 'id',
             type: 6,
             flags: 1),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(2, 2578392807471887538),
+            id: const obx_int.IdUid(2, 2532657542506138066),
             name: 'nome',
             type: 9,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(3, 5961925481045074527),
+            id: const obx_int.IdUid(3, 6243334699091263301),
             name: 'descricao',
             type: 9,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(4, 7200389935597455522),
+            id: const obx_int.IdUid(4, 8418146780199997114),
+            name: 'imagem',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(5, 1602183082896120802),
             name: 'ativo',
             type: 1,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(5, 2461496545291871744),
+            id: const obx_int.IdUid(6, 8875512110755923613),
             name: 'dataCadastro',
             type: 10,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(6, 2238565247487146665),
+            id: const obx_int.IdUid(7, 3369960921652087188),
             name: 'orderm',
             type: 6,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(7, 4126046193960883829),
+            id: const obx_int.IdUid(8, 7051242020462050057),
             name: 'selecionado',
             type: 1,
             flags: 0)
@@ -70,23 +75,23 @@ final _entities = <obx_int.ModelEntity>[
       relations: <obx_int.ModelRelation>[],
       backlinks: <obx_int.ModelBacklink>[]),
   obx_int.ModelEntity(
-      id: const obx_int.IdUid(2, 3207755274461869987),
+      id: const obx_int.IdUid(2, 9189646011596407543),
       name: 'Cliente',
-      lastPropertyId: const obx_int.IdUid(3, 5991580838322305235),
+      lastPropertyId: const obx_int.IdUid(3, 5928078411051349923),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(1, 8093552594228390197),
+            id: const obx_int.IdUid(1, 9015026713434551680),
             name: 'id',
             type: 6,
             flags: 1),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(2, 1873635352922783189),
+            id: const obx_int.IdUid(2, 4357155569107754068),
             name: 'nome',
             type: 9,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(3, 5991580838322305235),
+            id: const obx_int.IdUid(3, 5928078411051349923),
             name: 'telefone',
             type: 9,
             flags: 0)
@@ -94,23 +99,23 @@ final _entities = <obx_int.ModelEntity>[
       relations: <obx_int.ModelRelation>[],
       backlinks: <obx_int.ModelBacklink>[]),
   obx_int.ModelEntity(
-      id: const obx_int.IdUid(3, 8012226289373753482),
+      id: const obx_int.IdUid(3, 2166795882843366475),
       name: 'FormaPagamento',
-      lastPropertyId: const obx_int.IdUid(3, 3764353546644285780),
+      lastPropertyId: const obx_int.IdUid(3, 8971694952392503029),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(1, 1887490985570891061),
+            id: const obx_int.IdUid(1, 8987480674869222190),
             name: 'id',
             type: 6,
             flags: 1),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(2, 7376758694867736571),
+            id: const obx_int.IdUid(2, 7441329729661419187),
             name: 'nome',
             type: 9,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(3, 3764353546644285780),
+            id: const obx_int.IdUid(3, 8971694952392503029),
             name: 'ativo',
             type: 1,
             flags: 0)
@@ -118,33 +123,33 @@ final _entities = <obx_int.ModelEntity>[
       relations: <obx_int.ModelRelation>[],
       backlinks: <obx_int.ModelBacklink>[]),
   obx_int.ModelEntity(
-      id: const obx_int.IdUid(4, 4980671685619095706),
+      id: const obx_int.IdUid(4, 1130474072324115655),
       name: 'ItemPedido',
-      lastPropertyId: const obx_int.IdUid(5, 6977671803397429658),
+      lastPropertyId: const obx_int.IdUid(5, 1948760533683804517),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(1, 785157691504892275),
+            id: const obx_int.IdUid(1, 1191159157668292440),
             name: 'id',
             type: 6,
             flags: 1),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(2, 3470676656231599727),
+            id: const obx_int.IdUid(2, 5835533787572722994),
             name: 'idProduto',
             type: 6,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(3, 6664289464642648693),
+            id: const obx_int.IdUid(3, 2187186512979015848),
             name: 'idPedido',
             type: 6,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(4, 3801707282981621122),
+            id: const obx_int.IdUid(4, 483977909147551780),
             name: 'quantidade',
             type: 6,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(5, 6977671803397429658),
+            id: const obx_int.IdUid(5, 1948760533683804517),
             name: 'valorVenda',
             type: 8,
             flags: 0)
@@ -152,48 +157,48 @@ final _entities = <obx_int.ModelEntity>[
       relations: <obx_int.ModelRelation>[],
       backlinks: <obx_int.ModelBacklink>[]),
   obx_int.ModelEntity(
-      id: const obx_int.IdUid(5, 5260306708830318372),
+      id: const obx_int.IdUid(5, 1255792386979914240),
       name: 'Pedido',
-      lastPropertyId: const obx_int.IdUid(8, 7259904319722784086),
+      lastPropertyId: const obx_int.IdUid(8, 5535263248185553300),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(1, 448670737965582477),
+            id: const obx_int.IdUid(1, 2417846862582492537),
             name: 'id',
             type: 6,
             flags: 1),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(2, 6876492709580009094),
+            id: const obx_int.IdUid(2, 7924738969149422300),
             name: 'idCliente',
             type: 6,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(3, 6658005168882611990),
+            id: const obx_int.IdUid(3, 7121287665951351466),
             name: 'descricao',
             type: 9,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(4, 6761135325244447653),
+            id: const obx_int.IdUid(4, 5274017803116338112),
             name: 'idFormaPagamento',
             type: 6,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(5, 3373500575306872990),
+            id: const obx_int.IdUid(5, 867170592397236047),
             name: 'jaPagou',
             type: 1,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(6, 8778886350225145850),
+            id: const obx_int.IdUid(6, 9167560076408509530),
             name: 'total',
             type: 8,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(7, 252331980903910235),
+            id: const obx_int.IdUid(7, 4941439435277749945),
             name: 'statusPedido',
             type: 6,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(8, 7259904319722784086),
+            id: const obx_int.IdUid(8, 5535263248185553300),
             name: 'dataCadastro',
             type: 10,
             flags: 0)
@@ -201,100 +206,100 @@ final _entities = <obx_int.ModelEntity>[
       relations: <obx_int.ModelRelation>[],
       backlinks: <obx_int.ModelBacklink>[]),
   obx_int.ModelEntity(
-      id: const obx_int.IdUid(6, 1538403367729129027),
+      id: const obx_int.IdUid(6, 3369816714007424682),
       name: 'ProdutoEntity',
-      lastPropertyId: const obx_int.IdUid(18, 3917539148821689848),
+      lastPropertyId: const obx_int.IdUid(18, 2631591702310326063),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(1, 1868871349931272322),
+            id: const obx_int.IdUid(1, 5327803450225702691),
             name: 'id',
             type: 6,
             flags: 1),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(2, 2887720454939301438),
+            id: const obx_int.IdUid(2, 3913082325439851283),
             name: 'categoriaId',
             type: 11,
             flags: 520,
-            indexId: const obx_int.IdUid(1, 6343455341100386542),
+            indexId: const obx_int.IdUid(1, 9216148358816325933),
             relationTarget: 'CategoriaEntity'),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(3, 8503520927330973863),
+            id: const obx_int.IdUid(3, 8280518258846729298),
             name: 'idCategoria',
             type: 6,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(4, 7018093012106504988),
+            id: const obx_int.IdUid(4, 7393613829166710084),
             name: 'nomeCategoria',
             type: 9,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(5, 3755393822794888581),
+            id: const obx_int.IdUid(5, 8977175500153802944),
             name: 'nome',
             type: 9,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(6, 933440343885764800),
+            id: const obx_int.IdUid(6, 1026883351186484449),
             name: 'descricao',
             type: 9,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(7, 4287401550949201464),
+            id: const obx_int.IdUid(7, 4216034252200553454),
             name: 'ativo',
             type: 1,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(8, 1138612760590380880),
+            id: const obx_int.IdUid(8, 448215447852512795),
             name: 'imagem',
             type: 9,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(9, 7849871490349531789),
+            id: const obx_int.IdUid(9, 2872136742584412640),
             name: 'deleteDate',
             type: 10,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(10, 5774130756038236318),
+            id: const obx_int.IdUid(10, 1949706559187880581),
             name: 'valorVenda',
             type: 8,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(11, 6185039283642859802),
+            id: const obx_int.IdUid(11, 4731259696972695337),
             name: 'valorCusto',
             type: 8,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(12, 3557746176327284704),
+            id: const obx_int.IdUid(12, 8250781583710059044),
             name: 'codigo',
             type: 6,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(13, 2449864915959028017),
+            id: const obx_int.IdUid(13, 1958583220893523931),
             name: 'quantidadeEstoque',
             type: 6,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(14, 2253281501053604316),
+            id: const obx_int.IdUid(14, 8382764870488160523),
             name: 'observacao',
             type: 9,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(15, 100843203771636949),
+            id: const obx_int.IdUid(15, 4366498026681747942),
             name: 'quantidadeItem',
             type: 6,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(16, 5545531515728708213),
+            id: const obx_int.IdUid(16, 8992159603010296040),
             name: 'unidadeMedida',
             type: 6,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(17, 5224878143675721518),
+            id: const obx_int.IdUid(17, 8953789443091001610),
             name: 'quantidadePeso',
             type: 6,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(18, 3917539148821689848),
+            id: const obx_int.IdUid(18, 2631591702310326063),
             name: 'quantidadeVenda',
             type: 6,
             flags: 0)
@@ -338,8 +343,8 @@ Future<obx.Store> openStore(
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
       entities: _entities,
-      lastEntityId: const obx_int.IdUid(6, 1538403367729129027),
-      lastIndexId: const obx_int.IdUid(1, 6343455341100386542),
+      lastEntityId: const obx_int.IdUid(6, 3369816714007424682),
+      lastIndexId: const obx_int.IdUid(1, 9216148358816325933),
       lastRelationId: const obx_int.IdUid(0, 0),
       lastSequenceId: const obx_int.IdUid(0, 0),
       retiredEntityUids: const [],
@@ -365,14 +370,17 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final descricaoOffset = object.descricao == null
               ? null
               : fbb.writeString(object.descricao!);
-          fbb.startTable(8);
+          final imagemOffset =
+              object.imagem == null ? null : fbb.writeString(object.imagem!);
+          fbb.startTable(9);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, nomeOffset);
           fbb.addOffset(2, descricaoOffset);
-          fbb.addBool(3, object.ativo);
-          fbb.addInt64(4, object.dataCadastro?.millisecondsSinceEpoch);
-          fbb.addInt64(5, object.orderm);
-          fbb.addBool(6, object.selecionado);
+          fbb.addOffset(3, imagemOffset);
+          fbb.addBool(4, object.ativo);
+          fbb.addInt64(5, object.dataCadastro?.millisecondsSinceEpoch);
+          fbb.addInt64(6, object.orderm);
+          fbb.addBool(7, object.selecionado);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -380,27 +388,30 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
           final dataCadastroValue =
-              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 12);
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 14);
           final nomeParam = const fb.StringReader(asciiOptimization: true)
               .vTableGetNullable(buffer, rootOffset, 6);
           final descricaoParam = const fb.StringReader(asciiOptimization: true)
               .vTableGetNullable(buffer, rootOffset, 8);
           final ativoParam =
-              const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 10);
+              const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 12);
           final dataCadastroParam = dataCadastroValue == null
               ? null
               : DateTime.fromMillisecondsSinceEpoch(dataCadastroValue);
           final ordermParam =
-              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 14);
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 16);
           final selecionadoParam =
-              const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 16);
+              const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 18);
+          final imagemParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGetNullable(buffer, rootOffset, 10);
           final object = CategoriaEntity(
               nome: nomeParam,
               descricao: descricaoParam,
               ativo: ativoParam,
               dataCadastro: dataCadastroParam,
               orderm: ordermParam,
-              selecionado: selecionadoParam)
+              selecionado: selecionadoParam,
+              imagem: imagemParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -684,21 +695,25 @@ class CategoriaEntity_ {
   static final descricao =
       obx.QueryStringProperty<CategoriaEntity>(_entities[0].properties[2]);
 
+  /// see [CategoriaEntity.imagem]
+  static final imagem =
+      obx.QueryStringProperty<CategoriaEntity>(_entities[0].properties[3]);
+
   /// see [CategoriaEntity.ativo]
   static final ativo =
-      obx.QueryBooleanProperty<CategoriaEntity>(_entities[0].properties[3]);
+      obx.QueryBooleanProperty<CategoriaEntity>(_entities[0].properties[4]);
 
   /// see [CategoriaEntity.dataCadastro]
   static final dataCadastro =
-      obx.QueryDateProperty<CategoriaEntity>(_entities[0].properties[4]);
+      obx.QueryDateProperty<CategoriaEntity>(_entities[0].properties[5]);
 
   /// see [CategoriaEntity.orderm]
   static final orderm =
-      obx.QueryIntegerProperty<CategoriaEntity>(_entities[0].properties[5]);
+      obx.QueryIntegerProperty<CategoriaEntity>(_entities[0].properties[6]);
 
   /// see [CategoriaEntity.selecionado]
   static final selecionado =
-      obx.QueryBooleanProperty<CategoriaEntity>(_entities[0].properties[6]);
+      obx.QueryBooleanProperty<CategoriaEntity>(_entities[0].properties[7]);
 }
 
 /// [Cliente] entity fields to define ObjectBox queries.

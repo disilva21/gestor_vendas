@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gestor_vendas/database/object_box_database.dart';
+import 'package:gestor_vendas/database_gestor/object_box_database.dart';
+
 import 'package:objectbox/objectbox.dart';
 
 import '../../../../produto/domain/entities/produto.dart';

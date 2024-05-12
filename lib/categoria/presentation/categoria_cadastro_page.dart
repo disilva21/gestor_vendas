@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../data/providers/firebase/categoria_service.dart';
+
 import 'cubit/categoria_cubit.dart';
 import 'cubit/categoria_state.dart';
 

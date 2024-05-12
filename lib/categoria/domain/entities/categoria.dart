@@ -6,6 +6,7 @@ class CategoriaEntity {
   int id = 0;
   String? nome;
   String? descricao;
+  String? imagem;
   bool? ativo;
   @Property(type: PropertyType.date)
   DateTime? dataCadastro = DateTime.now();
@@ -18,6 +19,7 @@ class CategoriaEntity {
     this.dataCadastro,
     this.orderm,
     this.selecionado,
+    this.imagem,
   });
   String get dateFormat => DateFormat('dd.MM.yyyy hh:mm:ss').format(dataCadastro!);
 }
