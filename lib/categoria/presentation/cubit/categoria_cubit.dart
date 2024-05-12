@@ -73,6 +73,9 @@ class CategoriaCubit extends Cubit<CategoriaState> {
     lista = await _context.read<CategoriaService>().carregarCategorias();
 
     listaFiltro = lista;
+    for (var i = 0; i < lista.length; i++) {
+      await _context.read<CategoriaService>().deletar(lista[i].id);
+    }
 
     emit(CategoriaState.completo());
   }

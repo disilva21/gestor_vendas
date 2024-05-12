@@ -31,9 +31,14 @@ class CategoriaService extends ChangeNotifier {
   }
 
   Future<List<CategoriaEntity>> carregarCategorias() async {
-    final box = await getBox();
+    try {
+      final box = await getBox();
 
-    return box.getAll() as List<CategoriaEntity>;
+      return box.getAll() as List<CategoriaEntity>;
+    } catch (e) {
+      final teste = e;
+      return [];
+    }
   }
 
   Future<CategoriaEntity?> lerCategoria(int idCategoria) async {
