@@ -49,5 +49,5 @@ final providers = <SingleChildWidget>[
   ),
   BlocProvider<NovoPedidoCubit>(create: (context) => NovoPedidoCubit(context)),
   BlocProvider<CategoriaCubit>(create: (context) => CategoriaCubit(context)),
-  BlocProvider<ConfiguracaoCubit>(create: (context) => ConfiguracaoCubit(context)),
+  BlocProvider<ConfiguracaoCubit>(create: (context) => ConfiguracaoCubit(context)..loadDados()),
 ];

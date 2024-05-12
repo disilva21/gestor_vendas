@@ -32,7 +32,7 @@ class _ProdutoCadastroPageState extends State<ProdutoCadastroScreen> {
   final quantidade_estoque = TextEditingController();
   bool status = true;
 
-  String? unidadeMedidaSelecionado;
+  int? unidadeMedidaSelecionado;
 
   final valorCustoFormatter = MoneyMaskedTextController(leftSymbol: 'R\$ ');
 
@@ -73,6 +73,10 @@ class _ProdutoCadastroPageState extends State<ProdutoCadastroScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    if (_cubit.categorias.isNotEmpty) {
+      _cubit.categorias.removeWhere((element) => element.id == 0);
+    }
     return BlocProvider.value(
       value: _cubit,
       child: BlocBuilder<ProdutoCubit, ProdutoState>(
@@ -170,7 +174,7 @@ class _ProdutoCadastroPageState extends State<ProdutoCadastroScreen> {
                     SizedBox(height: 10),
                     SizedBox(
                       width: 520,
-                      child: DropdownButtonFormField<String?>(
+                      child: DropdownButtonFormField<int?>(
                         decoration: InputDecoration(
                             enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(color: Color.fromARGB(255, 147, 145, 145), width: 1),
@@ -188,9 +192,9 @@ class _ProdutoCadastroPageState extends State<ProdutoCadastroScreen> {
                         dropdownColor: Colors.white,
                         value: unidadeMedidaSelecionado,
                         items: _cubit.listaUnidadeMedida.map((UnidadeMedida e) {
-                          return DropdownMenuItem<String?>(value: e.id.toString(), child: Text(e.nome!));
+                          return DropdownMenuItem<int?>(value: e.id, child: Text(e.nome!));
                         }).toList(),
-                        onChanged: (String? newValue) {
+                        onChanged: (int? newValue) {
                           setState(() {
                             unidadeMedidaSelecionado = newValue!;
                             // categoriaDescSelected = _cubit.categorias.firstWhere((element) => element.id == categoriaSelected!).nome;
@@ -302,7 +306,7 @@ class _ProdutoCadastroPageState extends State<ProdutoCadastroScreen> {
                                 },
                                 validator: (value) {
                                   if (value!.isEmpty) return 'Campo obrigatório';
-                                  if (int.parse(value) < 0) return 'Informe um valor igual ou maior que 0.';
+                                  // if (num.parse(value) < 0) return 'Informe um valor igual ou maior que 0.';
                                   return null;
                                 },
                               ),
@@ -329,64 +333,64 @@ class _ProdutoCadastroPageState extends State<ProdutoCadastroScreen> {
                         },
                       ),
                     ),
-                    SizedBox(height: 15),
-                    const SizedBox(height: 5),
-                    Container(
-                      width: 220,
-                      decoration: BoxDecoration(border: Border.all(width: 1, color: Colors.grey[100]!), borderRadius: BorderRadius.circular(5)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                          if (_cubit.fileUint8List != null || _cubit.produtoEntity.imagem != null)
-                            Container(
-                              alignment: Alignment.center,
-                              width: double.infinity,
-                              height: 100,
-                              child: _cubit.produtoEntity.imagem != null ? readImage(_cubit.produtoEntity.imagem) : Image.memory(_cubit.fileUint8List!),
-                            ),
-                          if (_cubit.fileUint8List == null && _cubit.produtoEntity.imagem == null)
-                            Container(
-                              decoration: BoxDecoration(border: Border.all(width: 1, color: Colors.blue)),
-                              child: TextButton(
-                                child: Text(
-                                  'Selecione uma imagem',
-                                  style: TextStyle(color: Colors.blue),
-                                ),
-                                onPressed: () async {
-                                  xFile = null;
-                                  imageUint8List = null;
-                                  await _pickImage();
-                                },
-                              ),
-                            ),
-                          SizedBox(height: 15),
-                          if (_cubit.fileUint8List != null || _cubit.produtoEntity.imagem != null)
-                            TextButton.icon(
-                              // style: ElevatedButton.styleFrom(
-                              //   backgroundColor: Colors.red,
-                              // ),
-                              label: Text(
-                                'remover',
-                                style: theme.textTheme.bodyText2!.copyWith(color: Colors.red),
-                              ),
-                              icon: Icon(Icons.delete, color: Colors.red),
-                              onPressed: () async {
-                                if (_cubit.fileUint8List != null) {
-                                  _cubit.fileUint8List = null;
-                                } else {
-                                  _cubit.isRemoverImagem = true;
-                                }
+                    // SizedBox(height: 15),
+                    // const SizedBox(height: 5),
+                    // Container(
+                    //   width: 220,
+                    //   decoration: BoxDecoration(border: Border.all(width: 1, color: Colors.grey[100]!), borderRadius: BorderRadius.circular(5)),
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.all(5),
+                    //     child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                    //       if (_cubit.fileUint8List != null || _cubit.produtoEntity.imagem != null)
+                    //         Container(
+                    //           alignment: Alignment.center,
+                    //           width: double.infinity,
+                    //           height: 100,
+                    //           child: _cubit.produtoEntity.imagem != null ? readImage(_cubit.produtoEntity.imagem) : Image.memory(_cubit.fileUint8List!),
+                    //         ),
+                    //       if (_cubit.fileUint8List == null && _cubit.produtoEntity.imagem == null)
+                    //         Container(
+                    //           decoration: BoxDecoration(border: Border.all(width: 1, color: Colors.blue)),
+                    //           child: TextButton(
+                    //             child: Text(
+                    //               'Selecione uma imagem',
+                    //               style: TextStyle(color: Colors.blue),
+                    //             ),
+                    //             onPressed: () async {
+                    //               xFile = null;
+                    //               imageUint8List = null;
+                    //               await _pickImage();
+                    //             },
+                    //           ),
+                    //         ),
+                    //       SizedBox(height: 15),
+                    //       if (_cubit.fileUint8List != null || _cubit.produtoEntity.imagem != null)
+                    //         TextButton.icon(
+                    //           // style: ElevatedButton.styleFrom(
+                    //           //   backgroundColor: Colors.red,
+                    //           // ),
+                    //           label: Text(
+                    //             'remover',
+                    //             style: theme.textTheme.bodyText2!.copyWith(color: Colors.red),
+                    //           ),
+                    //           icon: Icon(Icons.delete, color: Colors.red),
+                    //           onPressed: () async {
+                    //             if (_cubit.fileUint8List != null) {
+                    //               _cubit.fileUint8List = null;
+                    //             } else {
+                    //               _cubit.isRemoverImagem = true;
+                    //             }
 
-                                setState(() {
-                                  _cubit.fileUint8List = null;
+                    //             setState(() {
+                    //               _cubit.fileUint8List = null;
 
-                                  _cubit.produtoEntity.imagem = null;
-                                });
-                              },
-                            ),
-                        ]),
-                      ),
-                    ),
+                    //               _cubit.produtoEntity.imagem = null;
+                    //             });
+                    //           },
+                    //         ),
+                    //     ]),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -421,14 +425,14 @@ class _ProdutoCadastroPageState extends State<ProdutoCadastroScreen> {
                                 _cubit.produtoEntity.codigo = codigo.text.isNotEmpty ? int.parse(codigo.text) : 0;
                                 _cubit.produtoEntity.quantidadeEstoque = quantidade_estoque.text.isNotEmpty ? int.parse(quantidade_estoque.text) : null;
 
-                                _cubit.produtoEntity.unidadeMedida = _cubit.listaUnidadeMedida.firstWhere((element) => element.id == int.parse(unidadeMedidaSelecionado!));
+                                _cubit.produtoEntity.unidadeMedida = unidadeMedidaSelecionado;
 
                                 _cubit.produtoEntity.categoria.targetId = categoriaIdSelected;
                                 _cubit.produtoEntity.idCategoria = categoriaIdSelected;
+                                _cubit.produtoEntity.ativo = status;
                                 if (_cubit.id != null) {
                                   _cubit.editar();
                                 } else {
-                                  _cubit.produtoEntity.ativo = status;
                                   _cubit.cadastrar();
                                 }
 
@@ -456,12 +460,12 @@ class _ProdutoCadastroPageState extends State<ProdutoCadastroScreen> {
       descricao.text = _cubit.produtoEntity.descricao!;
       status = _cubit.produtoEntity.ativo!;
 
-      unidadeMedidaSelecionado = _cubit.produtoEntity.unidadeMedida == null ? null : _cubit.produtoEntity.unidadeMedida!.id.toString();
+      unidadeMedidaSelecionado = _cubit.produtoEntity.unidadeMedida;
 
       _cubit.produtoEntity.ativo = _cubit.produtoEntity.ativo!;
       _cubit.id = _cubit.produtoEntity.id;
 
-      Future.delayed(Duration(milliseconds: 500));
+      // Future.delayed(Duration(milliseconds: 500));
     } else {
       clear_cadastro();
     }
@@ -489,6 +493,7 @@ class _ProdutoCadastroPageState extends State<ProdutoCadastroScreen> {
     pontoCarne = false;
     categoriaDescSelected = null;
     unidadeMedidaSelecionado = null;
+    setState(() {});
 
     //_cubit.produtoEntity.enumUnidadeMedida = EnumUnidadeMedida.massa;
   }
@@ -552,7 +557,7 @@ class _ProdutoCadastroPageState extends State<ProdutoCadastroScreen> {
             content: SingleChildScrollView(
               child: ListBody(
                 children: <Widget>[
-                  Container(
+                  SizedBox(
                     width: 800,
                     height: 300,
                     child:
@@ -576,22 +581,25 @@ class _ProdutoCadastroPageState extends State<ProdutoCadastroScreen> {
                         // ),
                         Stack(
                       children: [
-                        windCrop.Crop(
-                          willUpdateScale: (newScale) => newScale < 5,
-                          controller: _controller,
-                          image: imageUint8List!,
-                          onCropped: (croppedData) {
-                            _cubit.fileUint8List = croppedData;
-                            setState(() {
-                              _isCropping = false;
-                            });
-                          },
-                          aspectRatio: 4 / 3,
-                          maskColor: _isSumbnail ? Colors.white : null,
-                          cornerDotBuilder: (size, edgeAlignment) => const SizedBox.shrink(),
-                          fixCropRect: true,
-                          interactive: true,
-                          radius: 20,
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: windCrop.Crop(
+                            willUpdateScale: (newScale) => newScale < 5,
+                            controller: _controller,
+                            image: imageUint8List!,
+                            onCropped: (croppedData) {
+                              _cubit.fileUint8List = croppedData;
+                              setState(() {
+                                _isCropping = false;
+                              });
+                            },
+                            aspectRatio: 4 / 3,
+                            maskColor: _isSumbnail ? Colors.white : null,
+                            cornerDotBuilder: (size, edgeAlignment) => const SizedBox.shrink(),
+                            fixCropRect: true,
+                            interactive: true,
+                            radius: 20,
+                          ),
                         ),
                         Positioned(
                           right: 16,
@@ -645,7 +653,7 @@ class _ProdutoCadastroPageState extends State<ProdutoCadastroScreen> {
   }
 
   Widget readImage(String? imagem) {
-    var filename = '${_cubit.diretorio}/GPDVProd${imagem}.png';
+    var filename = 'assets/gestor_images/${imagem}.png';
 
     return Image.asset(filename);
   }

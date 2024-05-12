@@ -34,24 +34,28 @@ class CategoriaCubit extends Cubit<CategoriaState> {
   Future<void> cadastrar() async {
     emit(CategoriaState.carregando());
 
-    bool existe = false;
+    try {
+      bool existe = false;
 
-    if (lista.isNotEmpty) {
-      for (var i = 0; i < lista.length; i++) {
-        if (lista[i].nome!.toLowerCase() == categoriaEntity.nome!.toLowerCase()) {
-          existe = true;
-          break;
+      if (lista.isNotEmpty) {
+        for (var i = 0; i < lista.length; i++) {
+          if (lista[i].nome!.toLowerCase() == categoriaEntity.nome!.toLowerCase()) {
+            existe = true;
+            break;
+          }
         }
       }
-    }
 
-    if (!existe) {
-      lista.add(categoriaEntity);
-      _context.read<CategoriaService>().cadastrar(categoriaEntity);
+      if (!existe) {
+        lista.add(categoriaEntity);
+        await _context.read<CategoriaService>().cadastrar(categoriaEntity);
 
-      emit(CategoriaState.sucesso(mensagem: 'Categoria cadastrada com sucesso!'));
-    } else {
-      emit(CategoriaState.falha(mensagem: 'Categoria já existe'));
+        emit(CategoriaState.sucesso(mensagem: 'Categoria cadastrada com sucesso!'));
+      } else {
+        emit(CategoriaState.falha(mensagem: 'Categoria já existe'));
+      }
+    } catch (e) {
+      emit(CategoriaState.falha(mensagem: e.toString()));
     }
   }
 

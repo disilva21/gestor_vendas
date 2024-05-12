@@ -65,7 +65,11 @@ class _ProdutoPageState extends State<ProdutoScreen> {
                           child: BlocConsumer<ProdutoCubit, ProdutoState>(
                             listener: (context, state) {
                               if (state.sucesso == true) {
-                                BotToast.showText(onlyOne: true, text: state.mensagem!, duration: Duration(seconds: 5));
+                                BotToast.showText(onlyOne: true, text: state.mensagem!, duration: const Duration(seconds: 5));
+
+                                // Future.delayed(const Duration(seconds: 2)).then((value) {
+                                //   setState(() {});
+                                // });
                               }
 
                               if (state.falha == true) {
@@ -91,28 +95,122 @@ class _ProdutoPageState extends State<ProdutoScreen> {
                                                 'Produto',
                                                 style: theme.textTheme.bodyText1,
                                               ),
-                                              SizedBox(height: 10),
+                                              const SizedBox(height: 10),
                                               Text(
                                                 '(Os produtos serão utilizados para geração de pedidos)',
                                                 style: theme.textTheme.bodyText2,
                                               ),
                                             ],
                                           ),
-                                          SizedBox(
-                                            width: 200,
-                                            height: 40,
-                                            child: ElevatedButton(
-                                                onPressed: () async {
-                                                  _cubit.cadastro(ProdutoEntity());
-                                                },
-                                                child: Text(
-                                                  'Novo produto',
-                                                )),
+                                          Row(
+                                            children: [
+                                              SizedBox(
+                                                width: 115,
+                                                height: 40,
+                                                child: TextButton.icon(
+                                                    icon: const Icon(Icons.save_alt_rounded),
+                                                    onPressed: () async {
+                                                      await _cubit.exportarExcel();
+                                                    },
+                                                    label: const Text(
+                                                      'Exportar',
+                                                    )),
+                                              ),
+                                              const SizedBox(width: 10),
+                                              SizedBox(
+                                                width: 118,
+                                                height: 40,
+                                                child: TextButton.icon(
+                                                    icon: const Icon(Icons.read_more_outlined),
+                                                    onPressed: () async {
+                                                      final data = await showDialog<bool?>(
+                                                        context: context,
+                                                        barrierDismissible: false,
+                                                        builder: (_) => StatefulBuilder(
+                                                          builder: (BuildContext context, StateSetter myState) {
+                                                            return AlertDialog(
+                                                              backgroundColor: Colors.white,
+                                                              title: Center(
+                                                                child: Text(
+                                                                  "Atenção!",
+                                                                  style: theme.textTheme.displayMedium!.copyWith(color: Colors.red),
+                                                                ),
+                                                              ),
+                                                              content: SingleChildScrollView(
+                                                                child: Column(
+                                                                  children: <Widget>[
+                                                                    const SizedBox(height: 20),
+                                                                    Text('Deseja mesmo importar a planilha para o sistema, isso não tem volta!', style: theme.textTheme.displaySmall!),
+                                                                    const SizedBox(height: 20),
+                                                                    Center(
+                                                                      child: Text(
+                                                                          'Certifique se que a planilha que está dentro do diretorio "C:/GestorVendas/excel_importar" é a correta\n e tem um arquivo chamado: "produtos_excel.xlsx"',
+                                                                          style: theme.textTheme.labelLarge!),
+                                                                    ),
+                                                                    const SizedBox(height: 40),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              actions: <Widget>[
+                                                                SizedBox(
+                                                                  width: 200,
+                                                                  height: 30,
+                                                                  child: OutlinedButton(
+                                                                    child: Text(
+                                                                      'Não',
+                                                                      style: theme.textTheme.bodyText1!.copyWith(color: const Color.fromARGB(255, 42, 117, 179)),
+                                                                    ),
+                                                                    onPressed: () {
+                                                                      Navigator.of(context).pop(false);
+                                                                    },
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(width: 20),
+                                                                SizedBox(
+                                                                  width: 200,
+                                                                  height: 30,
+                                                                  child: ElevatedButton(
+                                                                    child: Text(
+                                                                      'Sim',
+                                                                      style: theme.textTheme.bodyText1!.copyWith(color: Colors.white),
+                                                                    ),
+                                                                    onPressed: () {
+                                                                      Navigator.of(context).pop(true);
+                                                                    },
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
+                                                        ),
+                                                      );
+
+                                                      if (data == true) {
+                                                        await _cubit.importarExcel();
+                                                      }
+                                                    },
+                                                    label: const Text(
+                                                      'Importar',
+                                                    )),
+                                              ),
+                                              const SizedBox(width: 10),
+                                              SizedBox(
+                                                width: 160,
+                                                height: 40,
+                                                child: ElevatedButton(
+                                                    onPressed: () async {
+                                                      _cubit.cadastro(ProdutoEntity());
+                                                    },
+                                                    child: const Text(
+                                                      'Novo produto',
+                                                    )),
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),
                                     ),
-                                    SizedBox(height: 20),
+                                    const SizedBox(height: 20),
                                     Expanded(child: body(state)),
                                   ],
                                 ),

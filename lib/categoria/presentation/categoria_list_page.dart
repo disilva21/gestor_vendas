@@ -86,8 +86,16 @@ class _CategoriaState extends State<CategoriaListScreen> with SingleTickerProvid
                       ),
                     Column(
                       children: _cubit.listaFiltro.map((item) {
-                        return Card(
-                          color: item.ativo != null && item.ativo! ? Colors.white : Colors.grey[300],
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: item.ativo != null && item.ativo! ? Colors.white : Colors.grey[300],
+                            border: Border(
+                              bottom: BorderSide(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),
+                            ),
+                          ),
                           child: ListTile(
                             title: Text(
                               item.nome.toString(),
@@ -99,6 +107,7 @@ class _CategoriaState extends State<CategoriaListScreen> with SingleTickerProvid
                               child: Row(
                                 children: [
                                   IconButton(
+                                    tooltip: "Editar categoria",
                                     icon: Icon(
                                       Icons.edit,
                                       color: Colors.orange[300],
@@ -109,8 +118,9 @@ class _CategoriaState extends State<CategoriaListScreen> with SingleTickerProvid
                                   ),
                                   const SizedBox(width: 10),
                                   SizedBox(
-                                    height: 30,
+                                    height: 40,
                                     child: IconButton(
+                                      tooltip: "Deletar categoria",
                                       icon: const Icon(
                                         Icons.delete,
                                         color: Colors.grey,
@@ -122,6 +132,7 @@ class _CategoriaState extends State<CategoriaListScreen> with SingleTickerProvid
                                   ),
                                   const SizedBox(width: 10),
                                   IconButton(
+                                    tooltip: "Ativar ou desativar",
                                     icon: Icon(
                                       item.ativo != null && item.ativo! ? Icons.check_box : Icons.check_box_outline_blank_sharp,
                                       color: item.ativo != null && item.ativo! ? Colors.blue : Colors.grey,

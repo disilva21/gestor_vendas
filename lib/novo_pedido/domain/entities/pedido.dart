@@ -18,6 +18,7 @@ class Pedido {
   int? idFormaPagamento;
   bool? jaPagou = false;
   double total = 0;
+  int? statusPedido = 0;
 
   @Property(type: PropertyType.date)
   DateTime? dataCadastro = DateTime.now();
@@ -29,6 +30,7 @@ class Pedido {
     this.idFormaPagamento,
     this.jaPagou,
     this.dataCadastro,
+    this.statusPedido,
   });
   String get dateFormat => DateFormat('dd.MM.yyyy hh:mm:ss').format(dataCadastro!);
 }

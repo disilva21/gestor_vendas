@@ -2,7 +2,7 @@ name: gestor_vendas
 description: "Vendas Ebel Tec"
 publish_to: "none"
 
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ">=3.3.0 <4.0.0"
@@ -50,6 +50,10 @@ dependencies:
   image_picker: ^0.8.5+3
   adaptive_theme: ^3.6.0
   flutter_localization: ^0.2.0
+  window_manager: ^0.3.8
+  calendar_date_picker2: ^0.5.2
+  excel: ^4.0.3
+  syncfusion_flutter_xlsio: ^20.4.54-beta
 
 dev_dependencies:
   flutter_test:
@@ -65,3 +69,7 @@ objectbox:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/
+    - assets/gestor_images/

@@ -1,19 +1,37 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:bot_toast/bot_toast.dart';
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_pos_printer_platform/esc_pos_utils_platform/src/capability_profile.dart';
+import 'package:flutter_pos_printer_platform/esc_pos_utils_platform/src/enums.dart';
+import 'package:flutter_pos_printer_platform/esc_pos_utils_platform/src/generator.dart';
+import 'package:flutter_pos_printer_platform/esc_pos_utils_platform/src/pos_column.dart';
+import 'package:flutter_pos_printer_platform/esc_pos_utils_platform/src/pos_styles.dart';
+import 'package:flutter_pos_printer_platform/flutter_pos_printer_platform.dart';
+import 'package:flutter_pos_printer_platform/printer.dart';
+import 'package:gestor_vendas/configuracao/domain/entities/cliente.dart';
+import 'package:gestor_vendas/configuracao/presentation/impressora.dart';
 import 'package:gestor_vendas/novo_pedido/presentation/cubit/pedido_state.dart';
 import 'package:gestor_vendas/produto/presentation/cubit/produto_cubit.dart';
+import 'package:gestor_vendas/util/remove_acentos.dart';
 import 'package:gestor_vendas/widget/header_widget.dart';
 import 'package:gestor_vendas/widget/side_bar.dart';
 
 import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../produto/data/providers/firebase/produto_service.dart';
 import '../../produto/domain/enum/unidade_medida.dart';
 import '../domain/entities/pedido.dart';
 import 'cubit/pedido_cubit.dart';
+import 'package:gbk_codec/gbk_codec.dart';
 
 class PedidoPageScreen extends StatefulWidget {
   @override
@@ -33,6 +51,9 @@ class _PedidoState extends State<PedidoPageScreen> with SingleTickerProviderStat
 
   DateTime date = DateTime.now();
 
+  StreamSubscription<USBStatus>? _subscriptionUsbStatus;
+  var _reconnect = false;
+
   @override
   void initState() {
     controller = BottomSheet.createAnimationController(this);
@@ -42,7 +63,240 @@ class _PedidoState extends State<PedidoPageScreen> with SingleTickerProviderStat
     _cubit.retornarUltimaData();
 
     _cubitProd = ProdutoCubit(context);
+
+    _subscriptionUsbStatus = PrinterManager.instance.stateUSB.listen((status) {
+      // log(' ----------------- status usb $status ------------------ ');
+      _currentUsbStatus = status;
+      if (Platform.isAndroid) {
+        if (status == USBStatus.connected && pendingTask != null) {
+          Future.delayed(const Duration(milliseconds: 1000), () {
+            PrinterManager.instance.send(type: PrinterType.usb, bytes: pendingTask!);
+            pendingTask = null;
+          });
+        }
+      }
+    });
+
+    _scan();
     super.initState();
+  }
+
+  BluetoothPrinter? selectedPrinter;
+  var printerManager = PrinterManager.instance;
+  List<int>? pendingTask;
+  BTStatus _currentStatus = BTStatus.none;
+  USBStatus _currentUsbStatus = USBStatus.none;
+  String? nomeImpressora;
+  Codec? codec;
+  Uint8List encode(String text, {bool isKanji = false}) {
+    // replace some non-ascii characters
+    text = text.replaceAll("’", "'").replaceAll("´", "'").replaceAll("»", '"').replaceAll(" ", ' ').replaceAll("•", '.');
+    if (!isKanji) {
+      return codec!.encode(text);
+    } else {
+      return Uint8List.fromList(gbk_bytes.encode(text));
+    }
+  }
+
+  void _scan() async {
+    devices.clear();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    nomeImpressora = await prefs.getString('selectedPrinter');
+
+    _subscription = printerManager.discovery(type: defaultPrinterType, isBle: _isBle).listen((device) {
+      final _device = BluetoothPrinter(deviceName: device.name, address: device.address, isBle: _isBle, vendorId: device.vendorId, productId: device.productId, typePrinter: defaultPrinterType);
+      devices.add(_device);
+      if (nomeImpressora!.isNotEmpty && device.name == nomeImpressora) {
+        selectedPrinter = _device;
+      }
+      setState(() {});
+    });
+  }
+
+  Future _printReceiveTest(ThemeData theme, Pedido pedido) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final paperSizeShared = await prefs.getInt('paperSize');
+    PaperSize paperSize = PaperSize.mm80;
+
+    switch (paperSizeShared) {
+      case 58:
+        paperSize = PaperSize.mm58;
+        break;
+      // case 72:
+      //   paperSize = PaperSize.mm72;
+      //   break;
+      case 80:
+        paperSize = PaperSize.mm80;
+        break;
+      default:
+        paperSize = PaperSize.mm80;
+    }
+
+    final profile = await CapabilityProfile.load();
+    final generator = Generator(paperSize, profile);
+
+    List<int> bytes = [];
+    Empresa empresa = Empresa(
+      nomeEmpresa: "Edinho",
+    );
+
+    final now = DateTime.now();
+    final formatter = DateFormat('dd/MM/yyyy H:m');
+    final String timestamp = formatter.format(now);
+
+    bytes += generator.text(empresa.nomeEmpresa.toString().withoutDiacriticalMarks, styles: const PosStyles(align: PosAlign.center, bold: true));
+
+    bytes += generator.row([
+      PosColumn(width: 6, text: 'Pedido', styles: const PosStyles(align: PosAlign.left, height: PosTextSize.size1)),
+      PosColumn(width: 6, text: pedido.id.toString().padLeft(10, '0'), styles: const PosStyles(align: PosAlign.right, height: PosTextSize.size1, bold: true)),
+    ]);
+    bytes += generator.row([
+      PosColumn(width: 3, text: 'Data', styles: const PosStyles(align: PosAlign.left, height: PosTextSize.size1)),
+      PosColumn(width: 9, text: timestamp, styles: const PosStyles(align: PosAlign.right, height: PosTextSize.size1)),
+    ]);
+    bytes += generator.feed(1);
+
+    bytes += generator.hr();
+
+    bytes += generator.text('Itens:', styles: const PosStyles(align: PosAlign.center, height: PosTextSize.size1));
+
+    List<PosColumn>? colsItens;
+
+    for (var i = 0; i < pedido.itens!.length; i++) {
+      colsItens = [];
+      colsItens.add(PosColumn(width: 12, text: pedido.itens![i].produto!.nome!.withoutDiacriticalMarks, styles: const PosStyles(align: PosAlign.left, height: PosTextSize.size1)));
+      bytes += generator.row(colsItens);
+
+      bytes += generator.row([
+        PosColumn(width: 2, text: '${pedido.itens![i].quantidade} x ', styles: const PosStyles(align: PosAlign.left, height: PosTextSize.size1)),
+        PosColumn(
+            width: 1,
+            text: '${_cubit.listaUnidadeMedida.firstWhere((element) => element.id! == pedido.itens![i].unidadeMedida!).sigla!}  ',
+            styles: const PosStyles(align: PosAlign.left, height: PosTextSize.size1)),
+        PosColumn(
+            width: 3,
+            text: NumberFormat.simpleCurrency(decimalDigits: 2).format(pedido.itens![i].produto!.valorVenda!).toString(),
+            styles: const PosStyles(align: PosAlign.left, height: PosTextSize.size1)),
+        PosColumn(
+            width: 6,
+            text: NumberFormat.simpleCurrency(decimalDigits: 2).format(pedido.itens![i].produto!.valorVenda! * pedido.itens![i].quantidade!).toString(),
+            styles: const PosStyles(align: PosAlign.right, height: PosTextSize.size1, bold: true)),
+      ]);
+    }
+
+    bytes += generator.hr();
+
+    bytes += generator.text('Cliente:', styles: const PosStyles(align: PosAlign.center, height: PosTextSize.size1));
+
+    bytes += generator.text(
+      pedido.cliente!.nome!.withoutDiacriticalMarks,
+      styles: const PosStyles(align: PosAlign.center, height: PosTextSize.size1, bold: true),
+    );
+
+    bytes += generator.row([
+      PosColumn(width: 4, text: 'Telefone', styles: const PosStyles(align: PosAlign.left, height: PosTextSize.size1)),
+      PosColumn(width: 8, text: pedido.cliente!.telefone!, styles: const PosStyles(align: PosAlign.right, height: PosTextSize.size1, bold: true)),
+    ]);
+
+    bytes += generator.row([
+      PosColumn(width: 6, text: 'Tipo entrega: ', styles: const PosStyles(align: PosAlign.left, height: PosTextSize.size1)),
+      PosColumn(width: 6, text: "Retira".withoutDiacriticalMarks, styles: const PosStyles(align: PosAlign.right, height: PosTextSize.size1, bold: true)),
+    ]);
+
+    bytes += generator.hr();
+
+    bytes += generator.text('Pagamento:', styles: const PosStyles(align: PosAlign.center, height: PosTextSize.size1));
+
+    bytes += generator.row([
+      PosColumn(width: 5, text: 'Tipo', styles: const PosStyles(align: PosAlign.left, height: PosTextSize.size1)),
+      PosColumn(width: 7, text: pedido.formaPagamento!.nome!.withoutDiacriticalMarks, styles: const PosStyles(align: PosAlign.right, height: PosTextSize.size1, bold: true)),
+    ]);
+
+    // bytes += generator.row([
+    //   PosColumn(width: 5, text: 'Taxa entrega', styles: const PosStyles(align: PosAlign.left, height: PosTextSize.size1)),
+    //   PosColumn(width: 7, text: NumberFormat.simpleCurrency(decimalDigits: 2).format(0), styles: const PosStyles(align: PosAlign.right, height: PosTextSize.size1, bold: true)),
+    // ]);
+
+    bytes += generator.row([
+      PosColumn(width: 5, text: 'Total', styles: const PosStyles(align: PosAlign.left, height: PosTextSize.size1)),
+      PosColumn(
+          width: 7, text: NumberFormat.simpleCurrency(decimalDigits: 2).format(pedido.total + 0).toString(), styles: const PosStyles(align: PosAlign.right, height: PosTextSize.size1, bold: true)),
+    ]);
+
+    bytes += generator.hr(ch: '=', linesAfter: 1);
+    bytes += generator.feed(1);
+    bytes += generator.text('Obrigado por usar Gestor Vendas', styles: const PosStyles(align: PosAlign.center, height: PosTextSize.size1));
+    generator.cut();
+    await _printEscPos(bytes, generator);
+  }
+
+  var devices = <BluetoothPrinter>[];
+  StreamSubscription<PrinterDevice>? _subscription;
+  var defaultPrinterType = PrinterType.usb;
+  var _isBle = false;
+
+  _printEscPos(List<int> bytes, Generator generator) async {
+    devices.clear();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    nomeImpressora = await prefs.getString('selectedPrinter');
+
+    _subscription = printerManager.discovery(type: defaultPrinterType, isBle: _isBle).listen((device) {
+      if (device.name == nomeImpressora)
+        devices.add(BluetoothPrinter(
+          deviceName: device.name,
+          address: device.address,
+          isBle: _isBle,
+          vendorId: device.vendorId,
+          productId: device.productId,
+          typePrinter: defaultPrinterType,
+        ));
+
+      selectedPrinter = devices[0];
+      setState(() {});
+    });
+    if (selectedPrinter == null) return;
+    var bluetoothPrinter = selectedPrinter!;
+
+    switch (bluetoothPrinter.typePrinter) {
+      case PrinterType.usb:
+        bytes += generator.feed(2);
+        bytes += generator.cut();
+        await printerManager.connect(
+            type: bluetoothPrinter.typePrinter, model: UsbPrinterInput(name: bluetoothPrinter.deviceName, productId: bluetoothPrinter.productId, vendorId: bluetoothPrinter.vendorId));
+        pendingTask = null;
+        if (Platform.isAndroid) pendingTask = bytes;
+        break;
+      case PrinterType.bluetooth:
+        bytes += generator.cut();
+        await printerManager.connect(
+            type: bluetoothPrinter.typePrinter,
+            model: BluetoothPrinterInput(name: bluetoothPrinter.deviceName, address: bluetoothPrinter.address!, isBle: bluetoothPrinter.isBle ?? false, autoConnect: _reconnect));
+        pendingTask = null;
+        if (Platform.isIOS || Platform.isAndroid) pendingTask = bytes;
+        break;
+      case PrinterType.network:
+        bytes += generator.feed(2);
+        bytes += generator.cut();
+        await printerManager.connect(type: bluetoothPrinter.typePrinter, model: TcpPrinterInput(ipAddress: bluetoothPrinter.address!));
+        break;
+      default:
+    }
+    if (bluetoothPrinter.typePrinter == PrinterType.bluetooth) {
+      if (_currentStatus == BTStatus.connected) {
+        printerManager.send(type: bluetoothPrinter.typePrinter, bytes: bytes);
+        pendingTask = null;
+      }
+    } else if (bluetoothPrinter.typePrinter == PrinterType.usb && Platform.isAndroid) {
+      // _currentUsbStatus is only supports on Android
+      if (_currentUsbStatus == USBStatus.connected) {
+        printerManager.send(type: bluetoothPrinter.typePrinter, bytes: bytes);
+        pendingTask = null;
+      }
+    } else {
+      printerManager.send(type: bluetoothPrinter.typePrinter, bytes: bytes);
+    }
   }
 
   @override
@@ -93,7 +347,7 @@ class _PedidoState extends State<PedidoPageScreen> with SingleTickerProviderStat
                                 body: Column(
                                   children: [
                                     filtro(theme),
-                                    SizedBox(height: 40),
+                                    const SizedBox(height: 40),
                                     listHeader(theme),
                                     lista(theme, media),
                                   ],
@@ -184,7 +438,7 @@ class _PedidoState extends State<PedidoPageScreen> with SingleTickerProviderStat
             decoration: BoxDecoration(border: Border.all(color: Colors.grey[300]!)),
             child: Row(
               children: [
-                //   _buildCalendarDialogButton(theme),
+                _buildCalendarDialogButton(theme),
                 Text(inputFormat.format(_cubit.dataInicio)),
                 SizedBox(width: 5),
                 Text('até'),
@@ -215,7 +469,7 @@ class _PedidoState extends State<PedidoPageScreen> with SingleTickerProviderStat
           SizedBox(width: 120, child: Text('Pagamento', style: theme.textTheme.bodyText1!.copyWith(color: Colors.white))),
           // SizedBox(width: 100, child: Text('Entrega', style: theme.textTheme.bodyText1!.copyWith(color: Colors.white))),
           SizedBox(width: 100, child: Text('Valor', style: theme.textTheme.bodyText1!.copyWith(color: Colors.white))),
-          // SizedBox(width: 150, child: Text('Status', style: theme.textTheme.bodyText1!.copyWith(color: Colors.white))),
+          SizedBox(width: 150, child: Text('Status', style: theme.textTheme.bodyText1!.copyWith(color: Colors.white))),
           SizedBox(width: 150, child: Text('Ações', style: theme.textTheme.bodyText1!.copyWith(color: Colors.white))),
         ],
       ),
@@ -254,7 +508,7 @@ class _PedidoState extends State<PedidoPageScreen> with SingleTickerProviderStat
                           SizedBox(width: 120, child: Text(item.formaPagamento!.nome!, style: theme.textTheme.bodyText1)),
                           // SizedBox(width: 100, child: Text(descricaoTipoEntrega(item.tipoEntrega!), style: theme.textTheme.bodyText1)),
                           SizedBox(width: 100, child: Text(NumberFormat.simpleCurrency(locale: 'pt_BR').format(item.total), style: theme.textTheme.bodyText1)),
-                          //  SizedBox(width: 150, child: Text(descricaoStatus(item.enumPedidoStatus!.index), style: theme.textTheme.bodyText1)),
+                          SizedBox(width: 150, child: Text(descricaoStatus(item.statusPedido ?? 0), style: theme.textTheme.bodyText1)),
                           // SizedBox(
                           //     width: 70,
                           //     child: IconButton(
@@ -272,10 +526,19 @@ class _PedidoState extends State<PedidoPageScreen> with SingleTickerProviderStat
                                   color: Colors.black,
                                 ),
                                 onPressed: () async {
-                                  final prod = await _cubit.lerPedido(item.id);
                                   _dialogBuilder(media, context, item, theme, index);
                                 },
                               )),
+
+                          SizedBox(
+                            width: 70,
+                            child: IconButton(
+                                onPressed: () {
+                                  _printReceiveTest(theme, item);
+                                  // await _showPrintCupomFiscal(theme, UsuarioDto(), pedidoNovo);
+                                },
+                                icon: Icon(Icons.print_outlined)),
+                          ),
                         ],
                       ),
                     ),
@@ -314,28 +577,16 @@ class _PedidoState extends State<PedidoPageScreen> with SingleTickerProviderStat
   String descricaoStatus(int step) {
     switch (step) {
       case 0:
-        return 'Em análise';
+        return 'Em andamento';
 
       case 1:
-        return 'Em preparação';
-
-      case 2:
-        return 'Pronto';
-
-      case 3:
-        return 'Saiu para entrega';
-
-      case 4:
-        return 'Pedido entregue';
-
-      case 5:
         return 'Finalizado';
 
-      case 6:
+      case 2:
         return 'Cancelado';
 
       default:
-        return 'Em análise';
+        return 'Em andamento';
     }
   }
 
@@ -361,7 +612,7 @@ class _PedidoState extends State<PedidoPageScreen> with SingleTickerProviderStat
     return Card(
       elevation: 7,
       child: Container(
-        width: media.width / 2,
+        constraints: const BoxConstraints(minHeight: 200),
         child: Scaffold(
           body: SingleChildScrollView(
             child: Padding(
@@ -375,16 +626,22 @@ class _PedidoState extends State<PedidoPageScreen> with SingleTickerProviderStat
                     children: [
                       Row(
                         children: [
-                          Text(
+                          const Text(
                             'Pedido: ',
                           ),
-                          SizedBox(width: 8),
+                          const SizedBox(width: 8),
                           Text(
                             '#${pedido.id}',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
+                      IconButton(
+                          onPressed: () {
+                            _printReceiveTest(theme, pedido);
+                            // await _showPrintCupomFiscal(theme, UsuarioDto(), pedidoNovo);
+                          },
+                          icon: Icon(Icons.print_outlined)),
                       Align(
                           alignment: Alignment.topRight,
                           child: TextButton.icon(
@@ -414,18 +671,18 @@ class _PedidoState extends State<PedidoPageScreen> with SingleTickerProviderStat
                       Text(pedido.cliente!.nome!, style: TextStyle(fontWeight: FontWeight.bold)),
                     ],
                   ),
-                  SizedBox(height: 5),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.end,
-                  //   children: [
-                  //     Icon(
-                  //       Icons.phone_android,
-                  //       size: 16,
-                  //       color: Colors.black,
-                  //     ),
-                  //     Text(maskCelular.maskText(pedido.cliente!.telefone!), style: TextStyle(fontWeight: FontWeight.bold)),
-                  //   ],
-                  // ),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Icon(
+                        Icons.phone_android,
+                        size: 16,
+                        color: Colors.black,
+                      ),
+                      Text(maskCelular.maskText(pedido.cliente!.telefone!), style: TextStyle(fontWeight: FontWeight.bold)),
+                    ],
+                  ),
 
                   SizedBox(height: 25),
                   Text('Itens do Pedido', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -449,7 +706,7 @@ class _PedidoState extends State<PedidoPageScreen> with SingleTickerProviderStat
                                 ),
                                 SizedBox(width: 3),
                                 Text(
-                                  ' ${itemProduto.nomeProduto!}',
+                                  ' ${itemProduto.produto!.nome!}',
                                   style: theme.textTheme.headlineMedium!.copyWith(fontSize: 12),
                                 ),
                               ],
@@ -493,20 +750,10 @@ class _PedidoState extends State<PedidoPageScreen> with SingleTickerProviderStat
                     children: [
                       Text('Total Itens: '),
                       SizedBox(width: 8),
-                      Text(NumberFormat.simpleCurrency(locale: 'pt_BR').format(pedido.total!), style: theme.textTheme.bodyMedium),
+                      Text(NumberFormat.simpleCurrency(locale: 'pt_BR').format(pedido.total), style: theme.textTheme.bodyMedium),
                     ],
                   ),
-                  SizedBox(height: 8),
-                  Divider(
-                    height: 1,
-                    color: Colors.grey[200],
-                  ),
-                  SizedBox(height: 8),
 
-                  Divider(
-                    height: 1,
-                    color: Colors.grey[200],
-                  ),
                   SizedBox(height: 8),
                   // Row(
                   //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -531,46 +778,20 @@ class _PedidoState extends State<PedidoPageScreen> with SingleTickerProviderStat
                     ],
                   ),
                   SizedBox(height: 15),
-                  // Card(
-                  //   color: Colors.red[100],
-                  //   child: Padding(
-                  //     padding: const EdgeInsets.all(12.0),
-                  //     child: Row(
-                  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //       children: [
-                  //         Text(descricaoTipoEntrega(pedido.tipoEntrega!), style: theme.textTheme.bodyText1),
-                  //         Text(pedido.formaPagamentoEntity!.nome!, style: theme.textTheme.bodyText1),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
-                  // SizedBox(height: 15),
-                  // if (pedido.entregadorEntity != null)
-                  //   Column(
-                  //     children: [
-                  //       Row(
-                  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //         children: [
-                  //           Text('Entregador'),
-                  //           Column(
-                  //             crossAxisAlignment: CrossAxisAlignment.end,
-                  //             children: [
-                  //               Text(pedido.entregadorEntity!.nome!, style: theme.textTheme.bodyText1),
-                  //               Text(
-                  //                 pedido.entregadorEntity!.celular!,
-                  //                 style: theme.textTheme.bodyText1,
-                  //               ),
-                  //             ],
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ],
-                  //   ),
-                  // SizedBox(height: 15),
-                  Divider(
-                    height: 1,
-                    color: Colors.orange[200],
+                  Card(
+                    color: Colors.red[100],
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Forma de pagamento", style: theme.textTheme.bodyText1),
+                          Text(pedido.formaPagamento!.nome!, style: theme.textTheme.bodyText1),
+                        ],
+                      ),
+                    ),
                   ),
+
                   SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -579,14 +800,22 @@ class _PedidoState extends State<PedidoPageScreen> with SingleTickerProviderStat
                         width: 250,
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(backgroundColor: Colors.red, textStyle: TextStyle(fontWeight: FontWeight.bold)),
-                            onPressed: () {
-                              // _cubit.setStatusPedido(EnumPedidoStatus.pedidoCancelado, pedido.id!);
-                            },
+                            onPressed: pedido.statusPedido == 2
+                                ? null
+                                : () {
+                                    _cubit.alterarStatusPedido(2, pedido.id);
+                                  },
                             child: Text('Cancelar')),
                       ),
                       SizedBox(
                         width: 250,
-                        child: ElevatedButton(onPressed: () async {}, child: Text('Finalizar')),
+                        child: ElevatedButton(
+                            onPressed: pedido.statusPedido == 1
+                                ? null
+                                : () async {
+                                    _cubit.alterarStatusPedido(1, pedido.id);
+                                  },
+                            child: Text('Finalizar')),
                       )
                     ],
                   ),
@@ -600,148 +829,148 @@ class _PedidoState extends State<PedidoPageScreen> with SingleTickerProviderStat
   }
 
   _buildCalendarDialogButton(ThemeData theme) {
-    // const dayTextStyle = TextStyle(color: Colors.black, fontWeight: FontWeight.w700);
-    // final weekendTextStyle = TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w600);
-    // final anniversaryTextStyle = TextStyle(
-    //   color: Colors.red[400],
-    //   fontWeight: FontWeight.w700,
-    //   decoration: TextDecoration.underline,
-    // );
-    // final config = CalendarDatePicker2WithActionButtonsConfig(
-    //   dayTextStyle: dayTextStyle,
-    //   calendarType: CalendarDatePicker2Type.range,
-    //   selectedDayHighlightColor: Colors.purple[800],
-    //   closeDialogOnCancelTapped: true,
-    //   firstDayOfWeek: 1,
-    //   weekdayLabelTextStyle: const TextStyle(
-    //     color: Colors.black87,
-    //     fontWeight: FontWeight.bold,
-    //   ),
-    //   controlsTextStyle: const TextStyle(
-    //     color: Colors.black,
-    //     fontSize: 15,
-    //     fontWeight: FontWeight.bold,
-    //   ),
-    //   centerAlignModePicker: true,
-    //   customModePickerIcon: const SizedBox(),
-    //   selectedDayTextStyle: dayTextStyle.copyWith(color: Colors.white),
-    //   dayTextStylePredicate: ({required date}) {
-    //     TextStyle? textStyle;
-    //     if (date.weekday == DateTime.saturday || date.weekday == DateTime.sunday) {
-    //       textStyle = weekendTextStyle;
-    //     }
-    //     if (DateUtils.isSameDay(date, DateTime(2021, 1, 25))) {
-    //       textStyle = anniversaryTextStyle;
-    //     }
-    //     return textStyle;
-    //   },
-    //   dayBuilder: ({
-    //     required date,
-    //     textStyle,
-    //     decoration,
-    //     isSelected,
-    //     isDisabled,
-    //     isToday,
-    //   }) {
-    //     Widget? dayWidget;
-    //     if (date.day % 3 == 0 && date.day % 9 != 0) {
-    //       dayWidget = Container(
-    //         decoration: decoration,
-    //         child: Center(
-    //           child: Stack(
-    //             alignment: AlignmentDirectional.center,
-    //             children: [
-    //               Text(
-    //                 MaterialLocalizations.of(context).formatDecimal(date.day),
-    //                 style: textStyle,
-    //               ),
-    //               Padding(
-    //                 padding: const EdgeInsets.only(top: 27.5),
-    //                 child: Container(
-    //                   height: 4,
-    //                   width: 4,
-    //                   decoration: BoxDecoration(
-    //                     borderRadius: BorderRadius.circular(5),
-    //                     color: isSelected == true ? Colors.white : Colors.grey[500],
-    //                   ),
-    //                 ),
-    //               ),
-    //             ],
-    //           ),
-    //         ),
-    //       );
-    //     }
-    //     return dayWidget;
-    //   },
-    //   yearBuilder: ({
-    //     required year,
-    //     decoration,
-    //     isCurrentYear,
-    //     isDisabled,
-    //     isSelected,
-    //     textStyle,
-    //   }) {
-    //     return Center(
-    //       child: Container(
-    //         decoration: decoration,
-    //         height: 36,
-    //         width: 72,
-    //         child: Center(
-    //           child: Semantics(
-    //             selected: isSelected,
-    //             button: true,
-    //             child: Row(
-    //               mainAxisAlignment: MainAxisAlignment.center,
-    //               children: [
-    //                 Text(
-    //                   year.toString(),
-    //                   style: textStyle,
-    //                 ),
-    //                 if (isCurrentYear == true)
-    //                   Container(
-    //                     padding: const EdgeInsets.all(5),
-    //                     margin: const EdgeInsets.only(left: 5),
-    //                     decoration: const BoxDecoration(
-    //                       shape: BoxShape.circle,
-    //                       color: Colors.redAccent,
-    //                     ),
-    //                   ),
-    //               ],
-    //             ),
-    //           ),
-    //         ),
-    //       ),
-    //     );
-    //   },
-    // );
-    // return Container(
-    //   padding: const EdgeInsets.all(5),
-    //   child: Row(
-    //     mainAxisAlignment: MainAxisAlignment.center,
-    //     children: [
-    //       TextButton.icon(
-    //         icon: Icon(Icons.calendar_today, color: Colors.blue),
-    //         onPressed: () async {
-    //           final values = await showCalendarDatePicker2Dialog(
-    //             context: context,
-    //             config: config,
-    //             dialogSize: const Size(325, 400),
-    //             borderRadius: BorderRadius.circular(15),
-    //             value: _cubit.dialogCalendarPickerValue,
-    //             dialogBackgroundColor: Colors.white,
-    //           );
-    //           if (values != null) {
-    //             _cubit.dialogCalendarPickerValue = values;
-    //             _cubit.search(searchController.text);
-    //           }
-    //         },
-    //         label: Text(
-    //           'Filtre por data',
-    //           style: theme.textTheme.bodyText1!.copyWith(color: Colors.blue),
-    //         ),
-    //       ),
-    //     ],
-    //   ),
-    // );
+    const dayTextStyle = TextStyle(color: Colors.black, fontWeight: FontWeight.w700);
+    final weekendTextStyle = TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w600);
+    final anniversaryTextStyle = TextStyle(
+      color: Colors.red[400],
+      fontWeight: FontWeight.w700,
+      decoration: TextDecoration.underline,
+    );
+    final config = CalendarDatePicker2WithActionButtonsConfig(
+      dayTextStyle: dayTextStyle,
+      calendarType: CalendarDatePicker2Type.range,
+      selectedDayHighlightColor: Colors.purple[800],
+      closeDialogOnCancelTapped: true,
+      firstDayOfWeek: 1,
+      weekdayLabelTextStyle: const TextStyle(
+        color: Colors.black87,
+        fontWeight: FontWeight.bold,
+      ),
+      controlsTextStyle: const TextStyle(
+        color: Colors.black,
+        fontSize: 15,
+        fontWeight: FontWeight.bold,
+      ),
+      centerAlignModePicker: true,
+      customModePickerIcon: const SizedBox(),
+      selectedDayTextStyle: dayTextStyle.copyWith(color: Colors.white),
+      dayTextStylePredicate: ({required date}) {
+        TextStyle? textStyle;
+        if (date.weekday == DateTime.saturday || date.weekday == DateTime.sunday) {
+          textStyle = weekendTextStyle;
+        }
+        if (DateUtils.isSameDay(date, DateTime(2021, 1, 25))) {
+          textStyle = anniversaryTextStyle;
+        }
+        return textStyle;
+      },
+      dayBuilder: ({
+        required date,
+        textStyle,
+        decoration,
+        isSelected,
+        isDisabled,
+        isToday,
+      }) {
+        Widget? dayWidget;
+        if (date.day % 3 == 0 && date.day % 9 != 0) {
+          dayWidget = Container(
+            decoration: decoration,
+            child: Center(
+              child: Stack(
+                alignment: AlignmentDirectional.center,
+                children: [
+                  Text(
+                    MaterialLocalizations.of(context).formatDecimal(date.day),
+                    style: textStyle,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 27.5),
+                    child: Container(
+                      height: 4,
+                      width: 4,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: isSelected == true ? Colors.white : Colors.grey[500],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+        return dayWidget;
+      },
+      yearBuilder: ({
+        required year,
+        decoration,
+        isCurrentYear,
+        isDisabled,
+        isSelected,
+        textStyle,
+      }) {
+        return Center(
+          child: Container(
+            decoration: decoration,
+            height: 36,
+            width: 72,
+            child: Center(
+              child: Semantics(
+                selected: isSelected,
+                button: true,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      year.toString(),
+                      style: textStyle,
+                    ),
+                    if (isCurrentYear == true)
+                      Container(
+                        padding: const EdgeInsets.all(5),
+                        margin: const EdgeInsets.only(left: 5),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.redAccent,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+    return Container(
+      padding: const EdgeInsets.all(5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TextButton.icon(
+            icon: Icon(Icons.calendar_today, color: Colors.blue),
+            onPressed: () async {
+              final values = await showCalendarDatePicker2Dialog(
+                context: context,
+                config: config,
+                dialogSize: const Size(325, 400),
+                borderRadius: BorderRadius.circular(15),
+                value: _cubit.dialogCalendarPickerValue,
+                dialogBackgroundColor: Colors.white,
+              );
+              if (values != null) {
+                _cubit.dialogCalendarPickerValue = values;
+                _cubit.search(searchController.text);
+              }
+            },
+            label: Text(
+              'Filtre por data',
+              style: theme.textTheme.bodyText1!.copyWith(color: Colors.blue),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

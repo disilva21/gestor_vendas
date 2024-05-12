@@ -11,6 +11,7 @@ import 'package:gestor_vendas/novo_pedido/domain/entities/pedido.dart';
 
 import 'package:gestor_vendas/novo_pedido/presentation/cubit/pedido_state.dart';
 import 'package:gestor_vendas/produto/data/providers/firebase/produto_service.dart';
+import 'package:gestor_vendas/produto/domain/entities/produto.dart';
 
 import '../../../../util/validar_celular.dart';
 
@@ -27,6 +28,7 @@ class PedidoCubit extends Cubit<PedidoState> {
 
   DateTime dataInicio = DateTime(DateTime.now().year, DateTime.now().month, 1);
   DateTime? dataFinal = null;
+  List<UnidadeMedida> listaUnidadeMedida = [];
 
   Future<void> retornarUltimaData() async {
     DateTime dataInicio = DateTime(DateTime.now().year, DateTime.now().month, 1);
@@ -43,6 +45,21 @@ class PedidoCubit extends Cubit<PedidoState> {
     } else {
       emit(PedidoState.valido(mensagem: 'Não foi possível salvar essa Pedido.'));
     }
+  }
+
+  Future<void> alterarStatusPedido(int status, int id) async {
+    emit(PedidoState.carregando());
+    await _context.read<PedidoService>().alterarStatusPedido(status, id);
+    emit(PedidoState.sucesso(mensagem: 'Dados salvos com sucesso!'));
+  }
+
+  Future<List<UnidadeMedida>> unidadeMedidas() async {
+    listaUnidadeMedida = [];
+    listaUnidadeMedida.add(UnidadeMedida(id: 1, nome: 'Unidade', sigla: 'UN'));
+    listaUnidadeMedida.add(UnidadeMedida(id: 2, nome: 'Quilogramas', sigla: 'KG'));
+    listaUnidadeMedida.add(UnidadeMedida(id: 3, nome: 'Metro', sigla: 'M'));
+
+    return listaUnidadeMedida;
   }
 
   Future<void> carregarPedidos() async {
@@ -66,10 +83,19 @@ class PedidoCubit extends Cubit<PedidoState> {
       } else {
         lista[i].formaPagamento = await _context.read<FormaPagamentoService>().ler(lista[i].idFormaPagamento!);
       }
+
+      if (lista[i].itens != null) {
+        for (var p = 0; p < lista[i].itens!.length; p++) {
+          final prd = await _context.read<ProdutoService>().lerProduto(lista[i].itens![p].idProduto);
+          lista[i].itens![p].produto = prd;
+          lista[i].itens![p].unidadeMedida = prd.unidadeMedida == null ? 1 : prd.unidadeMedida!;
+        }
+      }
     }
 
     listaFiltro = lista;
-
+    listaFiltro.sort((a, b) => b.id.compareTo(a.id));
+    await unidadeMedidas();
     await searchData();
     emit(PedidoState.completo());
   }
@@ -117,7 +143,7 @@ class PedidoCubit extends Cubit<PedidoState> {
 
     listaFiltro = lista
         .where((element) =>
-            (element.cliente!.nome!.toLowerCase().contains(valor.toLowerCase()) || element.cliente!.telefone!.toLowerCase().contains(ValidarCelular.normalizarCelular(valor))) &&
+            (element.cliente!.nome!.toLowerCase().contains(valor.toLowerCase()) || element.cliente!.telefone!.toLowerCase().contains(valor) || element.id.toString().contains(valor)) &&
             (DateTime(element.dataCadastro!.year, element.dataCadastro!.month, element.dataCadastro!.day).millisecondsSinceEpoch >= _dataInicio &&
                 DateTime(element.dataCadastro!.year, element.dataCadastro!.month, element.dataCadastro!.day).millisecondsSinceEpoch <= _dataFinal))
         .toList();

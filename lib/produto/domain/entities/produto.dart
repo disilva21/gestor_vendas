@@ -27,7 +27,7 @@ class ProdutoEntity {
   String? observacao;
   int? quantidadeItem = 1;
 
-  UnidadeMedida? unidadeMedida;
+  int? unidadeMedida;
   int? quantidadePeso;
   int? quantidadeVenda;
 
@@ -55,22 +55,26 @@ class ProdutoEntity {
 class UnidadeMedida {
   int? id;
   String? nome;
+  String? sigla;
 
   UnidadeMedida({
     this.id,
     this.nome,
+    this.sigla,
   });
 
   factory UnidadeMedida.fromMap(dynamic data) {
     return UnidadeMedida(
       id: data!['id'] == null ? null : data['id'],
       nome: data!['nome'] == null ? null : data['nome'],
+      sigla: data!['sigla'] == null ? null : data['sigla'],
     );
   }
   Map toMap() {
     return {
       'id': id,
       'nome': nome,
+      'sigla': sigla,
     };
   }
 }

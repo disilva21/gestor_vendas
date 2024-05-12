@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:image_picker/image_picker.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'configuracao_cardapio_state.dart';
 import 'configuracao_dados_state.dart';
@@ -21,6 +22,9 @@ class ConfiguracaoCubit extends Cubit<ConfiguracaoState> {
   String linkPagamento = '00020126360014BR.GOV.BCB.PIX0114+5511947579781520400005303986540549.905802BR5924Edvaldo Moreira da Silva6009SAO PAULO61080540900062260522pgtoebeltecmensalidade63047B56';
   String downloadedUrl = '';
 
+  String? versaoSistema;
+  num? buildNumber;
+
   Future<void> loadEndereco() async {
     emit(ConfiguracaoEnderecoState.inicio());
 
@@ -28,9 +32,10 @@ class ConfiguracaoCubit extends Cubit<ConfiguracaoState> {
   }
 
   Future<void> loadDados() async {
-    emit(ConfiguracaoDadosState.inicio());
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
-    emit(ConfiguracaoDadosState.completo());
+    buildNumber = int.parse(packageInfo.buildNumber);
+    versaoSistema = packageInfo.version + '-' + packageInfo.buildNumber;
   }
 
   Future<void> loadCardapio() async {

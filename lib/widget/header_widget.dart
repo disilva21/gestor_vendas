@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gerencianet/gerencianet.dart';
 import 'package:gestor_vendas/common/app_colors.dart';
+import 'package:gestor_vendas/configuracao/presentation/cubit/configuracao_cubit.dart';
+import 'package:gestor_vendas/configuracao/presentation/cubit/configuracao_state.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 import 'package:whatsapp_unilink/whatsapp_unilink.dart';
@@ -22,7 +24,7 @@ class HeaderWidget extends StatefulWidget {
 }
 
 class _HeaderWidgetState extends State<HeaderWidget> with TickerProviderStateMixin {
-  // late ConfiguracaoCubit _cubit;
+  late ConfiguracaoCubit _cubit;
   // late MensagemCubit _cubitMensagem;
   //Gerencianet gn = Gerencianet(credentials);
 
@@ -40,7 +42,7 @@ class _HeaderWidgetState extends State<HeaderWidget> with TickerProviderStateMix
 
   @override
   void initState() {
-    // _cubit = BlocProvider.of<ConfiguracaoCubit>(context);
+    _cubit = BlocProvider.of<ConfiguracaoCubit>(context);
     // _cubitLogin = BlocProvider.of<LoginCubit>(context);
     // _cubitMensagem = MensagemCubit(context);
 
@@ -48,204 +50,179 @@ class _HeaderWidgetState extends State<HeaderWidget> with TickerProviderStateMix
     super.initState();
   }
 
-  // AudioPlayer? _player;
-  // AudioPlayer? player;
-  // bool audioPlayer = false;
-
   @override
   void dispose() {
-    // _player?.dispose();
     _controller.dispose();
     super.dispose();
   }
 
-  // void _play() {
-  //   _player?.dispose();
-  //   final player = _player = AudioPlayer();
-  //   // player.play(AssetSource('sound_alarm.mp3'));
-  // }
-
-  // void stopSound() {
-  //   player?.stop();
-  //   player?.pause();
-  //   _player?.dispose();
-  //   player?.dispose();
-
-  //   //_cubitDash.listaNovosPedidos = [];
-  // }
-
   @override
   Widget build(BuildContext context) {
-    return Container();
-    // if (_cubitDash.listaNovosPedidos.isNotEmpty) {
-    //   _play();
-    //   audioPlayer = true;
-    //   setState(() {});
-    // }
     final theme = Theme.of(context);
-    // return BlocProvider<ConfiguracaoCubit>.value(
-    //   value: _cubit,
-    //   child: BlocBuilder<ConfiguracaoCubit, ConfiguracaoState>(
-    //     builder: (context, state) {
-    //       return Container(
-    //         color: Color.fromARGB(255, 15, 33, 64),
-    //         padding: EdgeInsets.symmetric(horizontal: 30, vertical: 5),
-    //         child: Row(
-    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //           children: [
-    //             logoWidget(),
-    //             // Container(
-    //             //   width: 190,
-    //             //   decoration: BoxDecoration(color: Colors.grey[100], border: Border.all(width: 1, color: Colors.white)),
-    //             //   child: TextButton.icon(
-    //             //       onPressed: () async {
-    //             //         String acao = 'abrir';
+    return Container();
+    return BlocProvider<ConfiguracaoCubit>.value(
+      value: _cubit,
+      child: BlocBuilder<ConfiguracaoCubit, ConfiguracaoState>(
+        builder: (context, state) {
+          return Container(
+            color: Color.fromARGB(255, 15, 33, 64),
+            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                logoWidget(),
+                // Container(
+                //   width: 190,
+                //   decoration: BoxDecoration(color: Colors.grey[100], border: Border.all(width: 1, color: Colors.white)),
+                //   child: TextButton.icon(
+                //       onPressed: () async {
+                //         String acao = 'abrir';
 
-    //             //         if (_cubit.configuracaoEntity.online != null && _cubit.configuracaoEntity.online!) {
-    //             //           acao = 'fechar';
-    //             //         }
+                //         if (_cubit.configuracaoEntity.online != null && _cubit.configuracaoEntity.online!) {
+                //           acao = 'fechar';
+                //         }
 
-    //             //         final data = await _showConfirmacaoOpenCloseDelivery(theme, acao);
-    //             //         if (data == true) {
-    //             //           _cubit.alterarStatusOnline();
-    //             //         }
-    //             //       },
-    //             //       icon: Image.asset(
-    //             //         _cubit.configuracaoEntity.online != null && _cubit.configuracaoEntity.online == true ? "assets/icons/icons8-open.png" : "assets/icons/icons8-closed.png",
-    //             //         width: 30,
-    //             //       ),
-    //             //       label: Text(
-    //             //         _cubit.configuracaoEntity.online != null && _cubit.configuracaoEntity.online! ? 'Fechar o delivery?' : 'Abrir o delivery?',
-    //             //         style: TextStyle(color: _cubit.configuracaoEntity.online != null && _cubit.configuracaoEntity.online! ? Colors.black : Colors.black, fontWeight: FontWeight.bold),
-    //             //       )),
-    //             // ),
-    //             // if (_cubitLogin.diasRestantes != null || _cubitLogin.horasRestantes != null)
-    //             //   Row(
-    //             //     children: [
-    //             //       TextButton.icon(
-    //             //         icon: Icon(Icons.warning_rounded, color: Colors.white),
-    //             //         label: Column(
-    //             //           children: [
-    //             //             if (_cubitLogin.diasRestantes != null)
-    //             //               Text(
-    //             //                 'Restam ${_cubitLogin.diasRestantes.toString()} dia(s)',
-    //             //                 style: theme.textTheme.bodyText2!.copyWith(color: Colors.white, fontSize: 12),
-    //             //               ),
-    //             //             if (_cubitLogin.diasRestantes == null && _cubitLogin.horasRestantes != null && _cubitLogin.horasRestantes! > 0)
-    //             //               Text(
-    //             //                 'Restam ${_cubitLogin.horasRestantes.toString()} hora(s)',
-    //             //                 style: theme.textTheme.bodyText2!.copyWith(color: Colors.white, fontSize: 12),
-    //             //               ),
-    //             //             if (_cubitLogin.diasRestantes == null &&
-    //             //                 _cubitLogin.horasRestantes != null &&
-    //             //                 _cubitLogin.horasRestantes! == 0 &&
-    //             //                 _cubitLogin.minRestantes != null &&
-    //             //                 _cubitLogin.minRestantes! > 0)
-    //             //               Text(
-    //             //                 'Restam ${_cubitLogin.minRestantes.toString()} min(s)',
-    //             //                 style: theme.textTheme.bodyText2!.copyWith(color: Colors.white, fontSize: 12),
-    //             //               ),
-    //             //             if (_cubitLogin.permitirAcesso == false)
-    //             //               Text(
-    //             //                 'Garanta seu acesso',
-    //             //                 style: theme.textTheme.bodyText2!.copyWith(color: Colors.white, fontSize: 12),
-    //             //               ),
-    //             //           ],
-    //             //         ),
-    //             //         onPressed: () {
-    //             //           _createCharge();
-    //             //           // html.window.history.pushState(null, 'pagamento', '#/pagamento');
-    //             //           Navigator.of(context).push(MaterialPageRoute(builder: (context) => PagamentoPageScreen()));
-    //             //           //_showMyDialogPagamento(theme);
-    //             //         },
-    //             //       ),
-    //             //       SizedBox(
-    //             //         width: 5,
-    //             //       ),
-    //             //       SizedBox(
-    //             //         width: 105,
-    //             //         height: 30,
-    //             //         child: ElevatedButton(
-    //             //             onPressed: () {
-    //             //               // _showMyDialogPagamento(theme);
-    //             //               // html.window.history.pushState(null, 'pagamento', '#/pagamento');
-    //             //               Navigator.of(context).push(MaterialPageRoute(builder: (context) => PagamentoPageScreen()));
-    //             //             },
-    //             //             child: Text('Contratar', style: theme.textTheme.bodyText2!.copyWith(color: Colors.white, fontSize: 12))),
-    //             //       ),
-    //             //     ],
-    //             //   ),
-    //             // // if (audioPlayer)
-    //             //   Builder(builder: (context) {
-    //             //     return ScaleTransition(
-    //             //       scale: _animation,
-    //             //       child: IconButton(
-    //             //         icon: Image.asset(
-    //             //           "assets/icons/icons8-alarm.png",
-    //             //           width: 30,
-    //             //         ),
-    //             //         onPressed: () {
-    //             //           stopSound();
-    //             //           audioPlayer = false;
-    //             //           setState(() {});
-    //             //         },
-    //             //       ),
-    //             //     );
-    //             //   }),
-    //             // if (!audioPlayer)
-    //             //   Builder(builder: (context) {
-    //             //     return IconButton(
-    //             //       icon: Image.asset(
-    //             //         "assets/icons/icons8-alarm.png",
-    //             //         color: Colors.grey,
-    //             //         width: 30,
-    //             //       ),
-    //             //       onPressed: null,
-    //             //     );
-    //             //   }),
-    //             // if (_cubitLogin.usuarioEntity.configuracaoEntity != null && _cubitLogin.usuarioEntity.configuracaoEntity!.path == null)
-    //             //   Container(
-    //             //     width: 190,
-    //             //     child: TextButton.icon(
-    //             //         onPressed: () {
-    //             //           Navigator.of(context).push(MaterialPageRoute(builder: (context) => ConfiguracaoScreen()));
-    //             //         },
-    //             //         icon: Image.asset(
-    //             //           "assets/icons/icons8-cardapio.png",
-    //             //           width: 30,
-    //             //         ),
-    //             //         label: Text(
-    //             //           'Montar meu cardápio',
-    //             //           style: theme.textTheme.bodyText2!.copyWith(color: Colors.white),
-    //             //         )),
-    //             //   ),
-    //             // Container(
-    //             //   width: 190,
-    //             //   child: TextButton.icon(
-    //             //       onPressed: () {
-    //             //         if (_cubitLogin.usuarioEntity.configuracaoEntity!.path == null) {
-    //             //           Navigator.of(context).push(MaterialPageRoute(builder: (context) => ConfiguracaoScreen()));
-    //             //         } else {
-    //             //           _cubit.carregarConfiguracoes();
-    //             //           _showVerMeuCardapio(theme);
-    //             //         }
-    //             //       },
-    //             //       icon: Image.asset(
-    //             //         "assets/icons/icons8-cardapio.png",
-    //             //         width: 30,
-    //             //       ),
-    //             //       label: Text(
-    //             //         'Ver meu cardápio',
-    //             //         style: theme.textTheme.bodyText2!.copyWith(color: Colors.white),
-    //             //       )),
-    //             // ),
-    //             notificationThemeProfileIcon(),
-    //           ],
-    //         ),
-    //       );
-    //     },
-    //   ),
-    // );
+                //         final data = await _showConfirmacaoOpenCloseDelivery(theme, acao);
+                //         if (data == true) {
+                //           _cubit.alterarStatusOnline();
+                //         }
+                //       },
+                //       icon: Image.asset(
+                //         _cubit.configuracaoEntity.online != null && _cubit.configuracaoEntity.online == true ? "assets/icons/icons8-open.png" : "assets/icons/icons8-closed.png",
+                //         width: 30,
+                //       ),
+                //       label: Text(
+                //         _cubit.configuracaoEntity.online != null && _cubit.configuracaoEntity.online! ? 'Fechar o delivery?' : 'Abrir o delivery?',
+                //         style: TextStyle(color: _cubit.configuracaoEntity.online != null && _cubit.configuracaoEntity.online! ? Colors.black : Colors.black, fontWeight: FontWeight.bold),
+                //       )),
+                // ),
+                // if (_cubitLogin.diasRestantes != null || _cubitLogin.horasRestantes != null)
+                //   Row(
+                //     children: [
+                //       TextButton.icon(
+                //         icon: Icon(Icons.warning_rounded, color: Colors.white),
+                //         label: Column(
+                //           children: [
+                //             if (_cubitLogin.diasRestantes != null)
+                //               Text(
+                //                 'Restam ${_cubitLogin.diasRestantes.toString()} dia(s)',
+                //                 style: theme.textTheme.bodyText2!.copyWith(color: Colors.white, fontSize: 12),
+                //               ),
+                //             if (_cubitLogin.diasRestantes == null && _cubitLogin.horasRestantes != null && _cubitLogin.horasRestantes! > 0)
+                //               Text(
+                //                 'Restam ${_cubitLogin.horasRestantes.toString()} hora(s)',
+                //                 style: theme.textTheme.bodyText2!.copyWith(color: Colors.white, fontSize: 12),
+                //               ),
+                //             if (_cubitLogin.diasRestantes == null &&
+                //                 _cubitLogin.horasRestantes != null &&
+                //                 _cubitLogin.horasRestantes! == 0 &&
+                //                 _cubitLogin.minRestantes != null &&
+                //                 _cubitLogin.minRestantes! > 0)
+                //               Text(
+                //                 'Restam ${_cubitLogin.minRestantes.toString()} min(s)',
+                //                 style: theme.textTheme.bodyText2!.copyWith(color: Colors.white, fontSize: 12),
+                //               ),
+                //             if (_cubitLogin.permitirAcesso == false)
+                //               Text(
+                //                 'Garanta seu acesso',
+                //                 style: theme.textTheme.bodyText2!.copyWith(color: Colors.white, fontSize: 12),
+                //               ),
+                //           ],
+                //         ),
+                //         onPressed: () {
+                //           _createCharge();
+                //           // html.window.history.pushState(null, 'pagamento', '#/pagamento');
+                //           Navigator.of(context).push(MaterialPageRoute(builder: (context) => PagamentoPageScreen()));
+                //           //_showMyDialogPagamento(theme);
+                //         },
+                //       ),
+                //       SizedBox(
+                //         width: 5,
+                //       ),
+                //       SizedBox(
+                //         width: 105,
+                //         height: 30,
+                //         child: ElevatedButton(
+                //             onPressed: () {
+                //               // _showMyDialogPagamento(theme);
+                //               // html.window.history.pushState(null, 'pagamento', '#/pagamento');
+                //               Navigator.of(context).push(MaterialPageRoute(builder: (context) => PagamentoPageScreen()));
+                //             },
+                //             child: Text('Contratar', style: theme.textTheme.bodyText2!.copyWith(color: Colors.white, fontSize: 12))),
+                //       ),
+                //     ],
+                //   ),
+                // // if (audioPlayer)
+                //   Builder(builder: (context) {
+                //     return ScaleTransition(
+                //       scale: _animation,
+                //       child: IconButton(
+                //         icon: Image.asset(
+                //           "assets/icons/icons8-alarm.png",
+                //           width: 30,
+                //         ),
+                //         onPressed: () {
+                //           stopSound();
+                //           audioPlayer = false;
+                //           setState(() {});
+                //         },
+                //       ),
+                //     );
+                //   }),
+                // if (!audioPlayer)
+                //   Builder(builder: (context) {
+                //     return IconButton(
+                //       icon: Image.asset(
+                //         "assets/icons/icons8-alarm.png",
+                //         color: Colors.grey,
+                //         width: 30,
+                //       ),
+                //       onPressed: null,
+                //     );
+                //   }),
+                // if (_cubitLogin.usuarioEntity.configuracaoEntity != null && _cubitLogin.usuarioEntity.configuracaoEntity!.path == null)
+                //   Container(
+                //     width: 190,
+                //     child: TextButton.icon(
+                //         onPressed: () {
+                //           Navigator.of(context).push(MaterialPageRoute(builder: (context) => ConfiguracaoScreen()));
+                //         },
+                //         icon: Image.asset(
+                //           "assets/icons/icons8-cardapio.png",
+                //           width: 30,
+                //         ),
+                //         label: Text(
+                //           'Montar meu cardápio',
+                //           style: theme.textTheme.bodyText2!.copyWith(color: Colors.white),
+                //         )),
+                //   ),
+                // Container(
+                //   width: 190,
+                //   child: TextButton.icon(
+                //       onPressed: () {
+                //         if (_cubitLogin.usuarioEntity.configuracaoEntity!.path == null) {
+                //           Navigator.of(context).push(MaterialPageRoute(builder: (context) => ConfiguracaoScreen()));
+                //         } else {
+                //           _cubit.carregarConfiguracoes();
+                //           _showVerMeuCardapio(theme);
+                //         }
+                //       },
+                //       icon: Image.asset(
+                //         "assets/icons/icons8-cardapio.png",
+                //         width: 30,
+                //       ),
+                //       label: Text(
+                //         'Ver meu cardápio',
+                //         style: theme.textTheme.bodyText2!.copyWith(color: Colors.white),
+                //       )),
+                // ),
+                notificationThemeProfileIcon(),
+              ],
+            ),
+          );
+        },
+      ),
+    );
   }
 
   // Widget _qrCode() {

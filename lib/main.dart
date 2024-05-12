@@ -4,21 +4,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' as bloc;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:gestor_vendas/categoria/domain/entities/categoria.dart';
-import 'package:gestor_vendas/categoria/presentation/categoria_page.dart';
-import 'package:gestor_vendas/categoria/presentation/cubit/categoria_cubit.dart';
 import 'package:gestor_vendas/common/providers/providers.dart';
+import 'package:gestor_vendas/dashboard/presentation/dashboard_page.dart';
 import 'package:gestor_vendas/novo_pedido/presentation/cubit/novo_pedido_cubit.dart';
 import 'package:gestor_vendas/novo_pedido/presentation/cubit/novo_pedido_state.dart';
-import 'package:gestor_vendas/novo_pedido/presentation/pedido_page.dart';
 import 'package:gestor_vendas/theme/app_theme.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
-import 'categoria/presentation/cubit/categoria_state.dart';
-import 'database/object_box_database.dart';
+import 'package:window_manager/window_manager.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
+  WindowOptions windowOptions = const WindowOptions(
+    size: Size(1280, 720),
+    center: true,
+    backgroundColor: Colors.transparent,
+    skipTaskbar: false,
+    titleBarStyle: TitleBarStyle.normal,
+    minimumSize: Size.fromWidth(800),
+    title: "Gestor de Vendas",
+    windowButtonVisibility: false,
+  );
+
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
+
   runApp(
     Phoenix(
       child: bloc.MultiBlocProvider(
@@ -60,7 +72,7 @@ class App extends StatelessWidget {
             ],
             home: BlocBuilder<NovoPedidoCubit, NovoPedidoState>(
               builder: (BuildContext context, NovoPedidoState state) {
-                return PedidoPageScreen();
+                return RelatorioScreen();
               },
             ),
           );

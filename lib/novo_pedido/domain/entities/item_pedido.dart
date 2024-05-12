@@ -1,3 +1,4 @@
+import 'package:gestor_vendas/produto/domain/entities/produto.dart';
 import 'package:objectbox/objectbox.dart';
 
 @Entity()
@@ -9,6 +10,10 @@ class ItemPedido {
   double? valorVenda;
   @Transient()
   String? nomeProduto;
+  @Transient()
+  int? unidadeMedida;
+  @Transient()
+  ProdutoEntity? produto;
 
   ItemPedido({
     this.idProduto,
@@ -16,5 +21,7 @@ class ItemPedido {
     this.quantidade,
     this.valorVenda,
     this.nomeProduto,
+    this.unidadeMedida,
+    this.produto,
   });
 }

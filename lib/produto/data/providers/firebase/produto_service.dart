@@ -51,4 +51,14 @@ class ProdutoService extends ChangeNotifier {
 
     return box.get(idProduto!) as ProdutoEntity;
   }
+
+  Future<void> baixarQuantidadeEstoque(int? idProduto, int quantidade) async {
+    try {
+      final box = await getBox();
+      ProdutoEntity prod = box.get(idProduto!);
+      prod.quantidadeEstoque = prod.quantidadeEstoque! - quantidade;
+
+      box.put(prod);
+    } catch (e) {}
+  }
 }

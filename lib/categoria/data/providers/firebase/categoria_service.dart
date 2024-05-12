@@ -18,7 +18,9 @@ class CategoriaService extends ChangeNotifier {
     try {
       final box = await getBox();
       box.put(categoria);
-    } catch (e) {}
+    } catch (e) {
+      final teste = e;
+    }
   }
 
   Future<void> editar(CategoriaEntity categoria) async {

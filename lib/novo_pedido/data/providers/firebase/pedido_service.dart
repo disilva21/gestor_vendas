@@ -33,4 +33,15 @@ class PedidoService extends ChangeNotifier {
 
     return box.getAll() as List<Pedido>;
   }
+
+  Future alterarStatusPedido(int status, int id) async {
+    try {
+      final box = await getBox();
+      Pedido ped = box.get(id);
+
+      ped.statusPedido = status;
+
+      box.put(ped);
+    } catch (e) {}
+  }
 }

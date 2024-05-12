@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gestor_vendas/common/app_colors.dart';
 import 'package:gestor_vendas/configuracao/presentation/cubit/configuracao_cubit.dart';
 import 'package:gestor_vendas/configuracao/presentation/impressora.dart';
+import 'package:gestor_vendas/dashboard/presentation/cubit/relatorio_cubit.dart';
+import 'package:gestor_vendas/dashboard/presentation/dashboard_page.dart';
 import 'package:gestor_vendas/novo_pedido/presentation/novo_pedido_page.dart';
 import 'package:gestor_vendas/novo_pedido/presentation/pedido_page.dart';
 
@@ -32,15 +34,15 @@ class SideBar extends StatelessWidget {
         child: ListView(
           shrinkWrap: true,
           children: [
-            Align(
-              alignment: Alignment.topRight,
-              child: IconButton(
-                onPressed: () {
-                  //  _cubitConfig.setMenuVisivel(!_cubitConfig.menuVisivel);
-                },
-                icon: Icon(Icons.menu),
-              ),
-            ),
+            // Align(
+            //   alignment: Alignment.topRight,
+            //   child: IconButton(
+            //     onPressed: () {
+            //       //  _cubitConfig.setMenuVisivel(!_cubitConfig.menuVisivel);
+            //     },
+            //     icon: Icon(Icons.menu),
+            //   ),
+            // ),
             // if (!_cubitConfig.menuVisivel)
             //   Align(
             //     alignment: Alignment.topRight,
@@ -67,8 +69,8 @@ class SideBar extends StatelessWidget {
             //   ),
             //  if (_cubitConfig.menuVisivel)
             Container(
-              color: Colors.white,
-              padding: EdgeInsets.all(10),
+              // color: Colors.blue,
+              padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -76,15 +78,10 @@ class SideBar extends StatelessWidget {
                   SizedBox(height: 5),
                   // Text(_cubit.usuarioEntity.nome ?? '', style: theme.textTheme.bodyText1),
                   // Text(_cubit.usuarioEntity.email ?? '', style: theme.textTheme.bodyText1),
-                  Text('Edvaldo', style: theme.textTheme.bodyText1),
-                  Text('disilva', style: theme.textTheme.bodyText1),
+                  Text('Edinho', style: theme.textTheme.bodyText1),
                 ],
               ),
             ),
-            SizedBox(
-              height: 5,
-            ),
-            Divider(),
             SizedBox(
               height: 5,
             ),
@@ -158,7 +155,7 @@ class SideBar extends StatelessWidget {
                 child: Container(
                   child: Text(
                     // _cubitConfig.menuVisivel ? "Cardápio".toUpperCase() : '',
-                    'Sistema',
+                    'Vendas',
                     style: TextStyle(
                       color: AppColors.txtGry,
                       fontWeight: FontWeight.bold,
@@ -176,118 +173,49 @@ class SideBar extends StatelessWidget {
                 children: [
                   InkWell(
                     onTap: () {
-                      //  _cubitConfig.addMarcacaoMenu('categoria');
+                      _cubitConfig.addMarcacaoMenu('relatorio');
+
+                      // html.window.history.pushState(null, 'categoria', '#/categoria');
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => RelatorioScreen()));
+                    },
+                    child: integrationMenuItem(
+                      title: "Dashboard",
+                      icone: Icon(Icons.dashboard, size: 18, color: isActive ? AppColors.menuSelected : AppColors.txtGry),
+                      bgColor: AppColors.jiraBgColor,
+                      visivel: true,
+                      isActive: _cubitConfig.relatorio,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      _cubitConfig.addMarcacaoMenu('novo_pedido');
 
                       // html.window.history.pushState(null, 'categoria', '#/categoria');
                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => NovoPedidoScreen()));
                     },
                     child: integrationMenuItem(
                       title: "Novo Pedido",
-                      icone: Icon(Icons.category, size: 18, color: isActive ? AppColors.menuSelected : AppColors.txtGry),
+                      icone: Icon(Icons.add_circle_outline_outlined, size: 18, color: isActive ? AppColors.menuSelected : AppColors.txtGry),
                       bgColor: AppColors.jiraBgColor,
                       visivel: true,
-                      isActive: false,
+                      isActive: _cubitConfig.novo_pedido,
                     ),
                   ),
                   InkWell(
                     onTap: () {
-                      //  _cubitConfig.addMarcacaoMenu('categoria');
+                      _cubitConfig.addMarcacaoMenu('pedido');
 
                       // html.window.history.pushState(null, 'categoria', '#/categoria');
                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => PedidoPageScreen()));
                     },
                     child: integrationMenuItem(
                       title: "Pedidos",
-                      icone: Icon(Icons.category, size: 18, color: isActive ? AppColors.menuSelected : AppColors.txtGry),
+                      icone: Icon(Icons.list, size: 18, color: isActive ? AppColors.menuSelected : AppColors.txtGry),
                       bgColor: AppColors.jiraBgColor,
                       visivel: true,
-                      isActive: false,
+                      isActive: _cubitConfig.pedido,
                     ),
                   ),
-
-                  InkWell(
-                    onTap: () {
-                      // html.window.history.pushState(null, 'produto', '#/produto');
-                      // _cubitConfig.addMarcacaoMenu('produto');
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => ImpressoraScreen()));
-                    },
-                    child: integrationMenuItem(
-                      title: "Impressora",
-                      icone: Icon(Icons.print, size: 18, color: isActive ? AppColors.menuSelected : AppColors.txtGry),
-                      bgColor: AppColors.slackBgColor,
-                      visivel: true,
-                      isActive: false,
-                    ),
-                  ),
-                  // InkWell(
-                  //   onTap: () {
-                  //     // html.window.history.pushState(null, 'forma de pagamento', '#/forma-pagamento');
-                  //     _cubitConfig.addMarcacaoMenu('forma-pagamento');
-                  //     Navigator.of(context).push(MaterialPageRoute(builder: (context) => FormaPagamentoPageScreen()));
-                  //   },
-                  //   child: integrationMenuItem(
-                  //     title: "Forma de Pagamento",
-                  //     icone: Icon(Icons.money_outlined, size: 18, color: isActive ? AppColors.menuSelected : AppColors.txtGry),
-                  //     bgColor: AppColors.slackBgColor,
-                  //     visivel: _cubitConfig.menuVisivel,
-                  //     isActive: _cubitConfig.formapagamento,
-                  //   ),
-                  // ),
-                  // InkWell(
-                  //   onTap: () {
-                  //     // html.window.history.pushState(null, 'forma de entrega', '#/forma-entrega');
-                  //     _cubitConfig.addMarcacaoMenu('forma-entrega');
-                  //     Navigator.of(context).push(MaterialPageRoute(builder: (context) => EntregaPageScreen()));
-                  //   },
-                  //   child: integrationMenuItem(
-                  //       title: "Forma de Entrega",
-                  //       icone: Icon(Icons.delivery_dining, size: 18, color: isActive ? AppColors.menuSelected : AppColors.txtGry),
-                  //       bgColor: AppColors.slackBgColor,
-                  //       visivel: _cubitConfig.menuVisivel,
-                  //       isActive: _cubitConfig.formaentrega),
-                  // ),
-                  // InkWell(
-                  //   onTap: () {
-                  //     // html.window.history.pushState(null, 'entregadores', '#/entregador');
-                  //     _cubitConfig.addMarcacaoMenu('entregador');
-                  //     Navigator.of(context).push(MaterialPageRoute(builder: (context) => EntregadorPageScreen()));
-                  //   },
-                  //   child: integrationMenuItem(
-                  //     title: "Entregadores",
-                  //     icone: Icon(Icons.motorcycle, size: 18, color: isActive ? AppColors.menuSelected : AppColors.txtGry),
-                  //     bgColor: AppColors.slackBgColor,
-                  //     visivel: _cubitConfig.menuVisivel,
-                  //     isActive: _cubitConfig.entregador,
-                  //   ),
-                  // ),
-                  // InkWell(
-                  //   onTap: () {
-                  //     // html.window.history.pushState(null, 'entregadores', '#/entregador');
-                  //     _cubitConfig.addMarcacaoMenu('impressora');
-                  //     Navigator.of(context).push(MaterialPageRoute(builder: (context) => ImpressoraScreen()));
-                  //   },
-                  //   child: integrationMenuItem(
-                  //     title: "Impressora",
-                  //     icone: Icon(Icons.print, size: 18, color: isActive ? AppColors.menuSelected : AppColors.txtGry),
-                  //     bgColor: AppColors.slackBgColor,
-                  //     visivel: _cubitConfig.menuVisivel,
-                  //     isActive: _cubitConfig.impressora,
-                  //   ),
-                  // ),
-                  // InkWell(
-                  //   onTap: () {
-                  //     // html.window.history.pushState(null, 'configuracao', '#/configuracao');
-                  //     _cubitConfig.addMarcacaoMenu('configuracao');
-                  //     Navigator.of(context).push(MaterialPageRoute(builder: (context) => ConfiguracaoScreen()));
-                  //   },
-                  //   child: integrationMenuItem(
-                  //     title: "Configurar cardápio",
-                  //     icone: Icon(Icons.settings, size: 18, color: isActive ? AppColors.menuSelected : AppColors.txtGry),
-                  //     bgColor: AppColors.slackBgColor,
-                  //     visivel: _cubitConfig.menuVisivel,
-                  //     isActive: _cubitConfig.configuracao,
-                  //   ),
-                  //),
                 ],
               ),
             ),
@@ -327,7 +255,7 @@ class SideBar extends StatelessWidget {
                       icone: Icon(Icons.category, size: 18, color: isActive ? AppColors.menuSelected : AppColors.txtGry),
                       bgColor: AppColors.jiraBgColor,
                       visivel: true,
-                      isActive: false,
+                      isActive: _cubitConfig.categoria,
                     ),
                   ),
                   InkWell(
@@ -340,13 +268,54 @@ class SideBar extends StatelessWidget {
                       icone: Icon(Icons.production_quantity_limits_outlined, size: 18, color: isActive ? AppColors.menuSelected : AppColors.txtGry),
                       bgColor: AppColors.slackBgColor,
                       visivel: true,
-                      isActive: false,
+                      isActive: _cubitConfig.produto,
                     ),
                   ),
                 ],
               ),
             ),
-
+            const SizedBox(height: 15),
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 10),
+              color: Color.fromARGB(255, 221, 224, 226),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 20),
+                child: Container(
+                  child: Text(
+                    // _cubitConfig.menuVisivel ? "Cardápio".toUpperCase() : '',
+                    'Configuração',
+                    style: TextStyle(
+                      color: AppColors.txtGry,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Column(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      // html.window.history.pushState(null, 'produto', '#/produto');
+                      _cubitConfig.addMarcacaoMenu('impressora');
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => ImpressoraScreen()));
+                    },
+                    child: integrationMenuItem(
+                      title: "Impressora",
+                      icone: Icon(Icons.print, size: 18, color: isActive ? AppColors.menuSelected : AppColors.txtGry),
+                      bgColor: AppColors.slackBgColor,
+                      visivel: true,
+                      isActive: _cubitConfig.impressora,
+                    ),
+                  ),
+                ],
+              ),
+            ),
             const Divider(
               height: 1,
               color: Color.fromARGB(255, 221, 224, 226),
@@ -354,34 +323,25 @@ class SideBar extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
-            // integrationMenuItem(
-            //   title: "Ajuda",
-            //   icone: Icon(Icons.help_outline, size: 18, color: isActive ? AppColors.menuSelected : AppColors.txtGry),
-            //   visivel: _cubitConfig.menuVisivel,
-            // ),
-            InkWell(
-              onTap: () {
-                //  _cubit.deslogar();
-                // html.window.history.pushState(null, 'login', '#/login');
-                // Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginForm()));
-              },
-              child: integrationMenuItem(
-                title: "Sair",
-                visivel: false,
-                icone: Icon(Icons.logout_outlined, size: 18, color: isActive ? AppColors.menuSelected : AppColors.txtGry),
-              ),
-            ),
-            SizedBox(height: 5),
-            Divider(),
 
             Container(
               padding: EdgeInsets.all(5),
-              color: Color.fromARGB(255, 161, 186, 248),
+              color: Color.fromARGB(255, 248, 249, 251),
               child: Center(
-                child: Text(
-                  'Gestor Menu Mania\nversão',
-                  style: theme.textTheme.bodySmall,
-                  textAlign: TextAlign.center,
+                child: Column(
+                  children: [
+                    Text(
+                      'Gestor de Vendas - EBEL Tec',
+                      style: theme.textTheme.bodyMedium!.copyWith(color: Colors.blue, fontSize: 10),
+                      textAlign: TextAlign.center,
+                    ),
+                    if (_cubitConfig.versaoSistema != null)
+                      Text(
+                        'Versão: ${_cubitConfig.versaoSistema}',
+                        style: theme.textTheme.bodyMedium!.copyWith(color: Colors.blue, fontSize: 10),
+                        textAlign: TextAlign.center,
+                      ),
+                  ],
                 ),
               ),
             ),

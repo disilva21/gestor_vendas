@@ -376,7 +376,7 @@ class _ImpressoraPageState extends State<ImpressoraScreen> with SingleTickerProv
                                       },
                                     ),
                                   ),
-                                  SizedBox(height: 20),
+                                  const SizedBox(height: 20),
                                   SizedBox(
                                     width: 680,
                                     child: Column(

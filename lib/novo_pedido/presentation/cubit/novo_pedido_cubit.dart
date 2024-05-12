@@ -57,6 +57,8 @@ class NovoPedidoCubit extends Cubit<NovoPedidoState> {
   int? valorDistancia;
   String diretorio = '';
 
+  List<UnidadeMedida> listaUnidadeMedida = [];
+
   Future<void> loadFormaEntrega() async {
     emit(NovoPedidoState.carregando());
 
@@ -84,14 +86,27 @@ class NovoPedidoCubit extends Cubit<NovoPedidoState> {
     await loadProdutos();
     await loadFormaPagamento();
     await loadFormaEntrega();
+    await unidadeMedidas();
     final dir = await getTemporaryDirectory();
     diretorio = dir.path;
 
     emit(NovoPedidoState.completo());
   }
 
+  Future<List<UnidadeMedida>> unidadeMedidas() async {
+    listaUnidadeMedida = [];
+    listaUnidadeMedida.add(UnidadeMedida(id: 1, nome: 'Unidade', sigla: 'UN'));
+    listaUnidadeMedida.add(UnidadeMedida(id: 2, nome: 'Quilogramas', sigla: 'KG'));
+    listaUnidadeMedida.add(UnidadeMedida(id: 3, nome: 'Metro', sigla: 'M'));
+
+    return listaUnidadeMedida;
+  }
+
   carregarCategorias() async {
     categoriasProduto = await _context.read<CategoriaService>().carregarCategorias();
+    categoriasProduto.add(CategoriaEntity(nome: "Todos"));
+
+    categoriasProduto.sort((a, b) => a.id.compareTo(b.id));
   }
 
   loadProdutos() async {
@@ -124,9 +139,25 @@ class NovoPedidoCubit extends Cubit<NovoPedidoState> {
 
   Future<void> filtroCategoria(CategoriaEntity item) async {
     emit(NovoPedidoState.carregando());
-    produtosFiltro = lista.where((element) => element.idCategoria == item.id).toList();
+    if (item.id > 0) {
+      produtosFiltro = lista.where((element) => element.idCategoria == item.id).toList();
+    } else {
+      produtosFiltro = lista;
+    }
+
     categoriaSelecioanada = item.id.toString();
     categoriaEntitySelecionada = item;
+    emit(NovoPedidoState.completo());
+  }
+
+  Future<void> seachProdutos(String texto) async {
+    emit(NovoPedidoState.carregando());
+
+    produtosFiltro = lista
+        .where((element) => element.nome!.toLowerCase().contains(texto.toLowerCase()) || element.codigo != null && element.codigo!.toString().contains(texto.toLowerCase()))
+        // element.nomeCategoria != null && element.nomeCategoria!.toLowerCase().contains(texto.toLowerCase()))
+        .toList();
+
     emit(NovoPedidoState.completo());
   }
 
@@ -144,7 +175,8 @@ class NovoPedidoCubit extends Cubit<NovoPedidoState> {
     ItemPedido item = ItemPedido(idProduto: _produtoEntity.id, quantidade: _produtoEntity.quantidadeItem, valorVenda: _produtoEntity.valorVenda);
 
     final prd = await lerProduto(_produtoEntity.id);
-    item.nomeProduto = prd.nome;
+
+    item.produto = prd;
     pedido.itens!.add(item);
 
     emit(NovoPedidoState.completo());
@@ -153,29 +185,34 @@ class NovoPedidoCubit extends Cubit<NovoPedidoState> {
   Future<void> loadFormaPagamento() async {
     emit(NovoPedidoState.carregando());
 
-    // FormaPagamento item1 = FormaPagamento(
-    //   nome: "Crédito",
-    //   ativo: true,
-    // );
-
-    // await _context.read<FormaPagamentoService>().cadastrar(item1);
-    // FormaPagamento item2 = FormaPagamento(
-    //   nome: "Débito",
-    //   ativo: true,
-    // );
-    // await _context.read<FormaPagamentoService>().cadastrar(item2);
-    // FormaPagamento item3 = FormaPagamento(
-    //   nome: "PIX",
-    //   ativo: true,
-    // );
-    // await _context.read<FormaPagamentoService>().cadastrar(item3);
-    // FormaPagamento item4 = FormaPagamento(
-    //   nome: "Dinheiro",
-    //   ativo: true,
-    // );
-    // await _context.read<FormaPagamentoService>().cadastrar(item4);
-
     formaPagamentos = await _context.read<FormaPagamentoService>().carregarFormaPagamento();
+
+    if (formaPagamentos.isEmpty) {
+      FormaPagamento item1 = FormaPagamento(
+        nome: "Crédito",
+        ativo: true,
+      );
+
+      await _context.read<FormaPagamentoService>().cadastrar(item1);
+      FormaPagamento item2 = FormaPagamento(
+        nome: "Débito",
+        ativo: true,
+      );
+      await _context.read<FormaPagamentoService>().cadastrar(item2);
+      FormaPagamento item3 = FormaPagamento(
+        nome: "PIX",
+        ativo: true,
+      );
+      await _context.read<FormaPagamentoService>().cadastrar(item3);
+      FormaPagamento item4 = FormaPagamento(
+        nome: "Dinheiro",
+        ativo: true,
+      );
+      await _context.read<FormaPagamentoService>().cadastrar(item4);
+
+      formaPagamentos = await _context.read<FormaPagamentoService>().carregarFormaPagamento();
+    }
+
     emit(NovoPedidoState.completo());
   }
 
@@ -197,15 +234,18 @@ class NovoPedidoCubit extends Cubit<NovoPedidoState> {
       // pedido.createDate = DateTime.now();
       if (cliente == null) {
         pedido.idCliente = 0;
+        pedido.cliente = Cliente(nome: 'Anônimo', telefone: '-');
       } else {
         pedido.idCliente = cliente!.id;
+        pedido.cliente = await _context.read<ClienteService>().ler(cliente!.id);
       }
+
       if (pedido.formaPagamento == null) {
         pedido.idFormaPagamento = 0;
       } else {
         pedido.idFormaPagamento = pedido.formaPagamento!.id;
       }
-
+      pedido.statusPedido = 0; //NOVO
       pedido.dataCadastro = DateTime.now();
       pedido = await _context.read<PedidoService>().cadastrar(pedido);
 
@@ -219,6 +259,7 @@ class NovoPedidoCubit extends Cubit<NovoPedidoState> {
           );
 
           await _context.read<ItemPedidoService>().cadastrar(item);
+          await baixarQuantidadeEstoque(pedido.itens![i].idProduto, pedido.itens![i].quantidade!);
         }
       }
 
@@ -246,6 +287,10 @@ class NovoPedidoCubit extends Cubit<NovoPedidoState> {
 
     // pedido.produtos![index].quantidadeItem = pedido.produtos![index].quantidadeItem! + 1;
     // emit(ClienteState.completo());
+  }
+
+  Future<void> baixarQuantidadeEstoque(int? idProduto, int quantidade) async {
+    await _context.read<ProdutoService>().baixarQuantidadeEstoque(idProduto, quantidade);
   }
 
   Future<ProdutoEntity> lerProduto(int? idProduto) async {

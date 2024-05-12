@@ -30,6 +30,14 @@ class ItemPedidoService extends ChangeNotifier {
     return results as List<ItemPedido>;
   }
 
+  Future<bool?> lerItemPedidoProduto(int idProduto) async {
+    final box = await getBox();
+    final query = (box.query(ItemPedido_.idProduto.equals(idProduto))).build();
+    final results = query.find();
+    query.close();
+    return results.isNotEmpty;
+  }
+
   Future<void> editar(Pedido pedido) async {}
 
   Future<ItemPedido> lerPedido(int? id) async {
