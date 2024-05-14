@@ -28,11 +28,11 @@ import 'produto_state.dart';
 class ProdutoCubit extends Cubit<ProdutoState> {
   BuildContext _context;
   ProdutoCubit(this._context) : super(ProdutoState());
-  ProdutoEntity produtoEntity = ProdutoEntity();
+  ProdutoModel produtoModel = ProdutoModel();
 
-  List<ProdutoEntity> lista = [];
-  List<ProdutoEntity> listaFiltro = [];
-  List<CategoriaEntity> categorias = [];
+  List<ProdutoModel> lista = [];
+  List<ProdutoModel> listaFiltro = [];
+  List<CategoriaModel> categorias = [];
 
   List<UnidadeMedida> listaUnidadeMedida = [];
 
@@ -50,9 +50,9 @@ class ProdutoCubit extends Cubit<ProdutoState> {
     emit(ProdutoListState.completo());
   }
 
-  Future<void> cadastro(ProdutoEntity item) async {
+  Future<void> cadastro(ProdutoModel item) async {
     emit(ProdutoCadastroState.inicio());
-    produtoEntity = item;
+    produtoModel = item;
     final dir = await getTemporaryDirectory();
     diretorio = dir.path;
 
@@ -90,12 +90,12 @@ class ProdutoCubit extends Cubit<ProdutoState> {
     String? existeMensagem;
     if (lista.isNotEmpty) {
       for (var i = 0; i < lista.length; i++) {
-        if (lista[i].nome!.toLowerCase() == produtoEntity.nome!.toLowerCase() && lista[i].idCategoria == produtoEntity.idCategoria) {
+        if (lista[i].nome!.toLowerCase() == produtoModel.nome!.toLowerCase() && lista[i].idCategoria == produtoModel.idCategoria) {
           existe = true;
           existeMensagem = 'nome';
           break;
         }
-        // if (lista[i].codigo! == produtoEntity.codigo && produtoEntity.codigo != 0) {
+        // if (lista[i].codigo! == produtoModel.codigo && produtoModel.codigo != 0) {
         //   existeCodigo = true;
         //   existeMensagem = 'código';
         //   break;
@@ -109,13 +109,13 @@ class ProdutoCubit extends Cubit<ProdutoState> {
       // if (fileUint8List != null) {
       //   String _nome_Imagem = DateTime.now().millisecondsSinceEpoch.toString();
       //   await adicionarImagem(_nome_Imagem);
-      //   produtoEntity.imagem = _nome_Imagem;
+      //   produtoModel.imagem = _nome_Imagem;
       // }
 
       try {
-        await _context.read<ProdutoService>().cadastrar(produtoEntity);
+        await _context.read<ProdutoService>().cadastrar(produtoModel);
 
-        produtoEntity = ProdutoEntity();
+        produtoModel = ProdutoModel();
 
         emit(ProdutoState.sucesso(mensagem: 'Produto cadastrado com sucesso!'));
       } catch (e) {
@@ -127,7 +127,7 @@ class ProdutoCubit extends Cubit<ProdutoState> {
   Future<void> editar() async {
     emit(ProdutoState.carregando());
     if (id != null) {
-      produtoEntity.id = id!;
+      produtoModel.id = id!;
 
       bool existe = false;
       bool existeCodigo = false;
@@ -135,12 +135,12 @@ class ProdutoCubit extends Cubit<ProdutoState> {
 
       if (lista.isNotEmpty) {
         for (var i = 0; i < lista.length; i++) {
-          if (lista[i].nome!.toLowerCase() == produtoEntity.nome!.toLowerCase() && lista[i].idCategoria == produtoEntity.idCategoria && lista[i].id != id) {
+          if (lista[i].nome!.toLowerCase() == produtoModel.nome!.toLowerCase() && lista[i].idCategoria == produtoModel.idCategoria && lista[i].id != id) {
             existe = true;
             existeMensagem = 'nome';
             break;
           }
-          if (lista[i].codigo != null && lista[i].codigo! == produtoEntity.codigo && produtoEntity.codigo != 0 && lista[i].id != id) {
+          if (lista[i].codigo != null && lista[i].codigo! == produtoModel.codigo && produtoModel.codigo != 0 && lista[i].id != id) {
             existeCodigo = true;
             existeMensagem = 'código';
             break;
@@ -152,18 +152,18 @@ class ProdutoCubit extends Cubit<ProdutoState> {
         emit(ProdutoCadastroState.falha(mensagem: 'Produto já existe ($existeMensagem)'));
       } else {
         // if (isRemoverImagem) {
-        //   produtoEntity.imagem = null;
+        //   produtoModel.imagem = null;
         // }
 
         // if (fileUint8List != null) {
         //   String _nome_Imagem = DateTime.now().millisecondsSinceEpoch.toString();
         //   await adicionarImagem(_nome_Imagem);
-        //   produtoEntity.imagem = _nome_Imagem;
+        //   produtoModel.imagem = _nome_Imagem;
         // }
 
-        await _context.read<ProdutoService>().editar(produtoEntity);
+        await _context.read<ProdutoService>().editar(produtoModel);
 
-        produtoEntity = ProdutoEntity();
+        produtoModel = ProdutoModel();
 
         emit(ProdutoState.sucesso(mensagem: 'Produto salvo com sucesso!'));
       }
@@ -171,7 +171,7 @@ class ProdutoCubit extends Cubit<ProdutoState> {
   }
 
   Future<void> lerProduto(int idProduto) async {
-    produtoEntity = await _context.read<ProdutoService>().lerProduto(idProduto);
+    produtoModel = await _context.read<ProdutoService>().lerProduto(idProduto);
   }
 
   Future<void> deletar(int idProduto) async {
@@ -194,7 +194,7 @@ class ProdutoCubit extends Cubit<ProdutoState> {
 
     categorias = categorias.where((element) => element.ativo == true).toList();
 
-    categorias.add(CategoriaEntity(nome: "Todos"));
+    categorias.add(CategoriaModel(nome: "Todos"));
 
     categorias.sort((a, b) => a.id.compareTo(b.id));
   }
@@ -207,7 +207,7 @@ class ProdutoCubit extends Cubit<ProdutoState> {
 
     for (var i = 0; i < lista.length; i++) {
       if (lista[i].idCategoria != null) {
-        CategoriaEntity? categoria = await _context.read<CategoriaService>().lerCategoria(lista[i].idCategoria!);
+        CategoriaModel? categoria = await _context.read<CategoriaService>().lerCategoria(lista[i].idCategoria!);
         if (categoria != null) {
           lista[i].nomeCategoria = categoria.nome;
         } else {
@@ -238,7 +238,7 @@ class ProdutoCubit extends Cubit<ProdutoState> {
     emit(ProdutoListState.completo());
   }
 
-  Future<void> filtroCategoria(CategoriaEntity item) async {
+  Future<void> filtroCategoria(CategoriaModel item) async {
     emit(ProdutoListState.carregando());
     if (item.id > 0) {
       listaFiltro = lista.where((element) => element.idCategoria == item.id).toList();
@@ -262,7 +262,7 @@ class ProdutoCubit extends Cubit<ProdutoState> {
     emit(ProdutoListState.completo());
   }
 
-  Future<void> alterarStatus(ProdutoEntity item) async {
+  Future<void> alterarStatus(ProdutoModel item) async {
     emit(ProdutoListState.carregando());
     item.ativo = !item.ativo!;
     await _context.read<ProdutoService>().alterarStatus(item);
@@ -295,62 +295,62 @@ class ProdutoCubit extends Cubit<ProdutoState> {
       var bytes = File(file).readAsBytesSync();
       Excel excel = Excel.decodeBytes(bytes);
 
-      List<ProdutoEntity> lista = [];
+      List<ProdutoModel> lista = [];
       for (var table in excel.tables.keys) {
         for (var row in excel.tables[table]!.rows) {
-          ProdutoEntity produtoEntity = ProdutoEntity();
+          ProdutoModel produtoModel = ProdutoModel();
           for (var cell in row) {
             if (cell!.rowIndex > 0) {
               final value = cell.value;
               if (value is TextCellValue) {
                 if (cell.columnIndex == 0) {
-                  produtoEntity.id = int.parse(value.value);
+                  produtoModel.id = int.parse(value.value);
                 }
                 if (cell.columnIndex == 1) {
-                  produtoEntity.nome = value.value;
+                  produtoModel.nome = value.value;
                 }
                 if (cell.columnIndex == 2) {
-                  produtoEntity.codigo = int.parse(value.value);
+                  produtoModel.codigo = int.parse(value.value);
                 }
                 if (cell.columnIndex == 3) {
-                  produtoEntity.idCategoria = int.parse(value.value);
+                  produtoModel.idCategoria = int.parse(value.value);
                 }
                 if (cell.columnIndex == 4) {
-                  produtoEntity.nomeCategoria = value.value;
+                  produtoModel.nomeCategoria = value.value;
                 }
                 if (cell.columnIndex == 5) {
-                  produtoEntity.valorVenda = double.parse(value.value.toString());
+                  produtoModel.valorVenda = double.parse(value.value.toString());
                 }
                 if (cell.columnIndex == 6) {
-                  produtoEntity.valorCusto = double.parse(value.value.toString());
+                  produtoModel.valorCusto = double.parse(value.value.toString());
                 }
                 if (cell.columnIndex == 7) {
-                  produtoEntity.quantidadeEstoque = int.parse(value.value);
+                  produtoModel.quantidadeEstoque = int.parse(value.value);
                 }
                 if (cell.columnIndex == 8) {
-                  produtoEntity.descricao = value.value;
+                  produtoModel.descricao = value.value;
                 }
                 if (cell.columnIndex == 9) {
-                  produtoEntity.unidadeMedida = int.parse(value.value);
+                  produtoModel.unidadeMedida = int.parse(value.value);
                 }
                 if (cell.columnIndex == 10) {
-                  produtoEntity.ativo = value.value == "true" ? true : false;
+                  produtoModel.ativo = value.value == "true" ? true : false;
                 }
                 if (cell.columnIndex == 11) {
-                  produtoEntity.imagem = value.value;
+                  produtoModel.imagem = value.value;
                 }
               }
             }
           }
 
-          lista.add(produtoEntity);
+          lista.add(produtoModel);
         }
       }
 
       if (lista.isNotEmpty) {
         lista.removeAt(0);
-        List<ProdutoEntity> listaProdutosSave = [];
-        List<CategoriaEntity> listaCategoria = [];
+        List<ProdutoModel> listaProdutosSave = [];
+        List<CategoriaModel> listaCategoria = [];
         List<String> listaCategoriaNome = [];
 
         listaCategoria = await _context.read<CategoriaService>().carregarCategorias();
@@ -364,13 +364,13 @@ class ProdutoCubit extends Cubit<ProdutoState> {
 
         //Cadastro das categorias
         for (var i = 0; i < listaCategoriaNome.length; i++) {
-          await _context.read<CategoriaService>().cadastrar(CategoriaEntity(nome: listaCategoriaNome[i], ativo: true));
+          await _context.read<CategoriaService>().cadastrar(CategoriaModel(nome: listaCategoriaNome[i], ativo: true));
         }
 
         listaProdutosSave = await _context.read<ProdutoService>().carregarProdutos();
         for (var i = 0; i < lista.length; i++) {
           if (listaProdutosSave.isNotEmpty && !listaProdutosSave.any((element) => element.id == lista[i].id)) {
-            ProdutoEntity prod = lista[i];
+            ProdutoModel prod = lista[i];
             prod.idCategoria = listaCategoria.firstWhere((element) => element.nome! == prod.nomeCategoria!).id;
             prod.nomeCategoria = listaCategoria.firstWhere((element) => element.nome! == prod.nomeCategoria!).nome;
             // prod.imagem = "";

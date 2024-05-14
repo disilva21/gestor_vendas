@@ -79,7 +79,7 @@ class _CategoriaState extends State<CategoriaCadastroScreen> {
                           controlAffinity: ListTileControlAffinity.leading,
                           value: status,
                           onChanged: (value) {
-                            // _cubit.categoriaEntity.ativo = value;
+                            // _cubit.categoriaModel.ativo = value;
                             setState(() {
                               status = value!;
                             });
@@ -115,11 +115,11 @@ class _CategoriaState extends State<CategoriaCadastroScreen> {
                         onPressed: _formCategoriaKey.currentState == null || !_formCategoriaKey.currentState!.validate()
                             ? null
                             : () {
-                                _cubit.categoriaEntity.nome = nome.text;
+                                _cubit.categoriaModel.nome = nome.text;
 
-                                _cubit.categoriaEntity.ativo = status;
+                                _cubit.categoriaModel.ativo = status;
 
-                                if (_cubit.categoriaEntity.id > 0) {
+                                if (_cubit.categoriaModel.id > 0) {
                                   _cubit.editar();
                                 } else {
                                   _cubit.cadastrar();
@@ -141,18 +141,18 @@ class _CategoriaState extends State<CategoriaCadastroScreen> {
 
     status = true;
     addSabores = false;
-    //_cubit.categoriaEntity.ativo = true;
-    //  _cubit.categoriaEntity.aceitaMaisSabores = false;
+    //_cubit.categoriaModel.ativo = true;
+    //  _cubit.categoriaModel.aceitaMaisSabores = false;
     _cubit.id = '';
   }
 
   void load_cadastro() {
-    if (_cubit.categoriaEntity.id != null && _cubit.categoriaEntity.id > 0) {
-      nome.text = _cubit.categoriaEntity.nome!;
-      //  status = _cubit.categoriaEntity.ativo!;
-      // _cubit.categoriaEntity.ativo = _cubit.categoriaEntity.ativo!;
-      // _cubit.id = _cubit.categoriaEntity.id!;
-      // addSabores = _cubit.categoriaEntity.aceitaMaisSabores ?? false;
+    if (_cubit.categoriaModel.id != null && _cubit.categoriaModel.id > 0) {
+      nome.text = _cubit.categoriaModel.nome!;
+      //  status = _cubit.categoriaModel.ativo!;
+      // _cubit.categoriaModel.ativo = _cubit.categoriaModel.ativo!;
+      // _cubit.id = _cubit.categoriaModel.id!;
+      // addSabores = _cubit.categoriaModel.aceitaMaisSabores ?? false;
     } else {
       clear_cadastro();
     }

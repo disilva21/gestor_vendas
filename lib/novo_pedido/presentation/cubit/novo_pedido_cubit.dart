@@ -23,17 +23,17 @@ class NovoPedidoCubit extends Cubit<NovoPedidoState> {
   BuildContext _context;
   NovoPedidoCubit(this._context) : super(NovoPedidoState());
 
-  CategoriaEntity categoriaEntity = CategoriaEntity();
-  ProdutoEntity produtoEntity = ProdutoEntity();
-  Pedido pedido = Pedido();
+  CategoriaModel categoriaModel = CategoriaModel();
+  ProdutoModel produtoModel = ProdutoModel();
+  PedidoModel pedido = PedidoModel();
 
-  List<CategoriaEntity> listaFiltro = [];
+  List<CategoriaModel> listaFiltro = [];
   List<int> listaQuantidadeSabores = [1, 2, 3, 4];
-  Cliente? cliente;
+  ClienteModel? cliente;
 
-  List<ProdutoEntity> produtosMaisSabores = [];
-  List<ProdutoEntity> produtosFiltro = [];
-  List<ProdutoEntity> produtosPedido = [];
+  List<ProdutoModel> produtosMaisSabores = [];
+  List<ProdutoModel> produtosFiltro = [];
+  List<ProdutoModel> produtosPedido = [];
   num? valorMaiorSabores = 0;
   num? valorOriginalProduto = 0;
 
@@ -41,14 +41,14 @@ class NovoPedidoCubit extends Cubit<NovoPedidoState> {
   num? valorProdutoAdicional = 0;
 
   String? categoriaSelecioanada;
-  List<CategoriaEntity> categoriasProduto = [];
-  List<ProdutoEntity> lista = [];
-  CategoriaEntity? categoriaEntitySelecionada;
+  List<CategoriaModel> categoriasProduto = [];
+  List<ProdutoModel> lista = [];
+  CategoriaModel? categoriaModelSelecionada;
   String id = '';
   int tabIndex = 0;
   String numeroPedido = '';
 
-  List<FormaPagamento> formaPagamentos = [];
+  List<FormaPagamentoModel> formaPagamentos = [];
   StreamSubscription<dynamic>? subscription;
 
   List<double> listaGeo = [];
@@ -104,7 +104,7 @@ class NovoPedidoCubit extends Cubit<NovoPedidoState> {
 
   carregarCategorias() async {
     categoriasProduto = await _context.read<CategoriaService>().carregarCategorias();
-    categoriasProduto.add(CategoriaEntity(nome: "Todos"));
+    categoriasProduto.add(CategoriaModel(nome: "Todos"));
 
     categoriasProduto.sort((a, b) => a.id.compareTo(b.id));
   }
@@ -113,7 +113,7 @@ class NovoPedidoCubit extends Cubit<NovoPedidoState> {
     emit(NovoPedidoState.carregandoImagem());
 
     // for (var i = 0; i < categoriasProduto.length; i++) {
-    //   ProdutoEntity? prod = lista.firstWhere((element) => element.idCategoria == categoriasProduto[i].id);
+    //   ProdutoModel? prod = lista.firstWhere((element) => element.idCategoria == categoriasProduto[i].id);
     //   if (prod == null) {
     //     categoriasProduto.removeWhere((element) => element.id == categoriasProduto[i].id);
     //   }
@@ -137,7 +137,7 @@ class NovoPedidoCubit extends Cubit<NovoPedidoState> {
     emit(NovoPedidoState.completo());
   }
 
-  Future<void> filtroCategoria(CategoriaEntity item) async {
+  Future<void> filtroCategoria(CategoriaModel item) async {
     emit(NovoPedidoState.carregando());
     if (item.id > 0) {
       produtosFiltro = lista.where((element) => element.idCategoria == item.id).toList();
@@ -146,7 +146,7 @@ class NovoPedidoCubit extends Cubit<NovoPedidoState> {
     }
 
     categoriaSelecioanada = item.id.toString();
-    categoriaEntitySelecionada = item;
+    categoriaModelSelecionada = item;
     emit(NovoPedidoState.completo());
   }
 
@@ -161,20 +161,20 @@ class NovoPedidoCubit extends Cubit<NovoPedidoState> {
     emit(NovoPedidoState.completo());
   }
 
-  ProdutoEntity prodDetalhe = ProdutoEntity();
+  ProdutoModel prodDetalhe = ProdutoModel();
 
-  Future<void> loadDetalhe(ProdutoEntity _produtoEntity) async {
-    prodDetalhe = await lerProduto(_produtoEntity.id);
+  Future<void> loadDetalhe(ProdutoModel _produtoModel) async {
+    prodDetalhe = await lerProduto(_produtoModel.id);
   }
 
-  Future<void> addProdutosPedido(ProdutoEntity _produtoEntity) async {
+  Future<void> addProdutosPedido(ProdutoModel _produtoModel) async {
     emit(NovoPedidoState.carregando());
 
     pedido.itens ??= [];
 
-    ItemPedido item = ItemPedido(idProduto: _produtoEntity.id, quantidade: _produtoEntity.quantidadeItem, valorVenda: _produtoEntity.valorVenda);
+    ItemPedidoModel item = ItemPedidoModel(idProduto: _produtoModel.id, quantidade: _produtoModel.quantidadeItem, valorVenda: _produtoModel.valorVenda);
 
-    final prd = await lerProduto(_produtoEntity.id);
+    final prd = await lerProduto(_produtoModel.id);
 
     item.produto = prd;
     pedido.itens!.add(item);
@@ -188,23 +188,23 @@ class NovoPedidoCubit extends Cubit<NovoPedidoState> {
     formaPagamentos = await _context.read<FormaPagamentoService>().carregarFormaPagamento();
 
     if (formaPagamentos.isEmpty) {
-      FormaPagamento item1 = FormaPagamento(
+      FormaPagamentoModel item1 = FormaPagamentoModel(
         nome: "Crédito",
         ativo: true,
       );
 
       await _context.read<FormaPagamentoService>().cadastrar(item1);
-      FormaPagamento item2 = FormaPagamento(
+      FormaPagamentoModel item2 = FormaPagamentoModel(
         nome: "Débito",
         ativo: true,
       );
       await _context.read<FormaPagamentoService>().cadastrar(item2);
-      FormaPagamento item3 = FormaPagamento(
+      FormaPagamentoModel item3 = FormaPagamentoModel(
         nome: "PIX",
         ativo: true,
       );
       await _context.read<FormaPagamentoService>().cadastrar(item3);
-      FormaPagamento item4 = FormaPagamento(
+      FormaPagamentoModel item4 = FormaPagamentoModel(
         nome: "Dinheiro",
         ativo: true,
       );
@@ -234,7 +234,7 @@ class NovoPedidoCubit extends Cubit<NovoPedidoState> {
       // pedido.createDate = DateTime.now();
       if (cliente == null) {
         pedido.idCliente = 0;
-        pedido.cliente = Cliente(nome: 'Anônimo', telefone: '-');
+        pedido.cliente = ClienteModel(nome: 'Anônimo', telefone: '-');
       } else {
         pedido.idCliente = cliente!.id;
         pedido.cliente = await _context.read<ClienteService>().ler(cliente!.id);
@@ -251,7 +251,7 @@ class NovoPedidoCubit extends Cubit<NovoPedidoState> {
 
       if (pedido.id > 0) {
         for (var i = 0; i < pedido.itens!.length; i++) {
-          ItemPedido item = ItemPedido(
+          ItemPedidoModel item = ItemPedidoModel(
             idProduto: pedido.itens![i].idProduto,
             idPedido: pedido.id,
             quantidade: pedido.itens![i].quantidade,
@@ -278,11 +278,11 @@ class NovoPedidoCubit extends Cubit<NovoPedidoState> {
     emit(NovoPedidoState.completo());
   }
 
-  Future<void> addItemPedido(ProdutoEntity produtoEntity, int index) async {
-    // pedido.total = pedido.total! + produtoEntity.valorVenda!;
+  Future<void> addItemPedido(ProdutoModel produtoModel, int index) async {
+    // pedido.total = pedido.total! + produtoModel.valorVenda!;
 
-    // for (var i = 0; i < produtoEntity.adicionais!.length; i++) {
-    //   pedido.total = pedido.total! + produtoEntity.adicionais![i].valorVenda!;
+    // for (var i = 0; i < produtoModel.adicionais!.length; i++) {
+    //   pedido.total = pedido.total! + produtoModel.adicionais![i].valorVenda!;
     // }
 
     // pedido.produtos![index].quantidadeItem = pedido.produtos![index].quantidadeItem! + 1;
@@ -293,7 +293,7 @@ class NovoPedidoCubit extends Cubit<NovoPedidoState> {
     await _context.read<ProdutoService>().baixarQuantidadeEstoque(idProduto, quantidade);
   }
 
-  Future<ProdutoEntity> lerProduto(int? idProduto) async {
+  Future<ProdutoModel> lerProduto(int? idProduto) async {
     return await _context.read<ProdutoService>().lerProduto(idProduto);
   }
 }

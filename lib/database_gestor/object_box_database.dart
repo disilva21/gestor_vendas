@@ -1,9 +1,0 @@
-import 'package:gestor_vendas/database_gestor/objectbox.g.dart';
-
-class ObjectBoxDatabase {
-  Store? _store;
-
-  Future<Store> getStore() async {
-    return _store ??= await openStore();
-  }
-}

@@ -114,7 +114,7 @@ class _PedidoState extends State<PedidoPageScreen> with SingleTickerProviderStat
     });
   }
 
-  Future _printReceiveTest(ThemeData theme, Pedido pedido) async {
+  Future _printReceiveTest(ThemeData theme, PedidoModel pedido) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final paperSizeShared = await prefs.getInt('paperSize');
     PaperSize paperSize = PaperSize.mm80;
@@ -590,7 +590,7 @@ class _PedidoState extends State<PedidoPageScreen> with SingleTickerProviderStat
     }
   }
 
-  Future<void> _dialogBuilder(Size media, BuildContext context, Pedido pedidoEntity, ThemeData theme, int index) {
+  Future<void> _dialogBuilder(Size media, BuildContext context, PedidoModel pedidoEntity, ThemeData theme, int index) {
     return showModalBottomSheet<void>(
       transitionAnimationController: controller,
       context: context,
@@ -606,7 +606,7 @@ class _PedidoState extends State<PedidoPageScreen> with SingleTickerProviderStat
     );
   }
 
-  Widget detalhe(Size media, BuildContext context, Pedido pedido, ThemeData theme, int index) {
+  Widget detalhe(Size media, BuildContext context, PedidoModel pedido, ThemeData theme, int index) {
     var inputFormat = DateFormat('dd-MM-yyyy');
 
     return Card(

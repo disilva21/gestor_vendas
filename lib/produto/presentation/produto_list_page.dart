@@ -18,7 +18,7 @@ class _EntregaPageState extends State<ProdutoListScreen> with SingleTickerProvid
   bool status = true;
 
   TextEditingController searchController = TextEditingController();
-  CategoriaEntity? categoriaIdSelected;
+  CategoriaModel? categoriaIdSelected;
 
   @override
   void initState() {
@@ -86,7 +86,7 @@ class _EntregaPageState extends State<ProdutoListScreen> with SingleTickerProvid
                         child: Container(
                           margin: EdgeInsets.only(top: 12),
                           height: 80,
-                          child: DropdownButtonFormField<CategoriaEntity>(
+                          child: DropdownButtonFormField<CategoriaModel>(
                             decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.grey[300]!, width: 1),
@@ -103,10 +103,10 @@ class _EntregaPageState extends State<ProdutoListScreen> with SingleTickerProvid
                                 ),
                             dropdownColor: Colors.white,
                             value: categoriaIdSelected,
-                            items: _cubit.categorias.map((CategoriaEntity e) {
-                              return DropdownMenuItem<CategoriaEntity>(value: e, child: Text(e.nome!));
+                            items: _cubit.categorias.map((CategoriaModel e) {
+                              return DropdownMenuItem<CategoriaModel>(value: e, child: Text(e.nome!));
                             }).toList(),
-                            onChanged: (CategoriaEntity? newValue) {
+                            onChanged: (CategoriaModel? newValue) {
                               setState(() {
                                 searchController.text = "";
                                 _cubit.filtroTexto = null;

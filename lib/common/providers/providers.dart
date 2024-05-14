@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gestor_vendas/configuracao/presentation/cubit/configuracao_cubit.dart';
 
-import 'package:gestor_vendas/database_gestor/object_box_database.dart';
+import 'package:gestor_vendas/db_gestor/object_box_database.dart';
 import 'package:gestor_vendas/novo_pedido/data/providers/firebase/cliente_service.dart';
 import 'package:gestor_vendas/novo_pedido/data/providers/firebase/formapagamento_service.dart';
 import 'package:gestor_vendas/novo_pedido/data/providers/firebase/item_pedido_service.dart';

@@ -116,7 +116,7 @@ class _CategoriaState extends State<CategoriaPageScreen> {
                                                       // ? null
                                                       // :
                                                       () {
-                                                    _cubit.cadastro(CategoriaEntity());
+                                                    _cubit.cadastro(CategoriaModel());
                                                   },
                                                   child: Text('Nova categoria'),
                                                 ),

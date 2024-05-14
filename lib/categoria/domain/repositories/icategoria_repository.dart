@@ -1,10 +1,8 @@
-
-
 import '../entities/categoria.dart';
 
 abstract class ICategoriaRepository {
-  Future<void> cadastrar(CategoriaEntity categoria);
-  Future<void> editar(CategoriaEntity categoria);
-  Future<List<CategoriaEntity>?> carregarCategorias();
-  Future<bool> alterarStatus(CategoriaEntity item);
+  Future<void> cadastrar(CategoriaModel categoria);
+  Future<void> editar(CategoriaModel categoria);
+  Future<List<CategoriaModel>?> carregarCategorias();
+  Future<bool> alterarStatus(CategoriaModel item);
 }

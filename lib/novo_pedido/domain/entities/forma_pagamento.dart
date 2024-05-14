@@ -1,12 +1,12 @@
 import 'package:objectbox/objectbox.dart';
 
 @Entity()
-class FormaPagamento {
+class FormaPagamentoModel {
   int id = 0;
   String? nome;
   bool? ativo;
 
-  FormaPagamento({
+  FormaPagamentoModel({
     this.nome,
     this.ativo,
   });

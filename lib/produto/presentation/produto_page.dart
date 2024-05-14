@@ -199,7 +199,7 @@ class _ProdutoPageState extends State<ProdutoScreen> {
                                                 height: 40,
                                                 child: ElevatedButton(
                                                     onPressed: () async {
-                                                      _cubit.cadastro(ProdutoEntity());
+                                                      _cubit.cadastro(ProdutoModel());
                                                     },
                                                     child: const Text(
                                                       'Novo produto',

@@ -1,12 +1,12 @@
 import 'package:objectbox/objectbox.dart';
 
 @Entity()
-class Cliente {
+class ClienteModel {
   int id = 0;
   String? nome;
   String? telefone;
 
-  Cliente({
+  ClienteModel({
     this.nome,
     this.telefone,
   });

@@ -11,10 +11,10 @@ import 'categoria_state.dart';
 class CategoriaCubit extends Cubit<CategoriaState> {
   BuildContext _context;
   CategoriaCubit(this._context) : super(CategoriaState());
-  CategoriaEntity categoriaEntity = CategoriaEntity();
+  CategoriaModel categoriaModel = CategoriaModel();
 
-  List<CategoriaEntity> lista = [];
-  List<CategoriaEntity> listaFiltro = [];
+  List<CategoriaModel> lista = [];
+  List<CategoriaModel> listaFiltro = [];
   List<int> listaQuantidadeSabores = [1, 2, 3, 4];
 
   String id = '';
@@ -25,9 +25,9 @@ class CategoriaCubit extends Cubit<CategoriaState> {
     emit(CategoriaListState.completo());
   }
 
-  Future<void> cadastro(CategoriaEntity item) async {
+  Future<void> cadastro(CategoriaModel item) async {
     emit(CategoriaCadastroState.inicio());
-    categoriaEntity = item;
+    categoriaModel = item;
     emit(CategoriaCadastroState.completo());
   }
 
@@ -39,7 +39,7 @@ class CategoriaCubit extends Cubit<CategoriaState> {
 
       if (lista.isNotEmpty) {
         for (var i = 0; i < lista.length; i++) {
-          if (lista[i].nome!.toLowerCase() == categoriaEntity.nome!.toLowerCase()) {
+          if (lista[i].nome!.toLowerCase() == categoriaModel.nome!.toLowerCase()) {
             existe = true;
             break;
           }
@@ -47,8 +47,8 @@ class CategoriaCubit extends Cubit<CategoriaState> {
       }
 
       if (!existe) {
-        lista.add(categoriaEntity);
-        await _context.read<CategoriaService>().cadastrar(categoriaEntity);
+        lista.add(categoriaModel);
+        await _context.read<CategoriaService>().cadastrar(categoriaModel);
 
         emit(CategoriaState.sucesso(mensagem: 'Categoria cadastrada com sucesso!'));
       } else {
@@ -62,7 +62,7 @@ class CategoriaCubit extends Cubit<CategoriaState> {
   Future<void> editar() async {
     emit(CategoriaState.carregando());
 
-    _context.read<CategoriaService>().editar(categoriaEntity);
+    _context.read<CategoriaService>().editar(categoriaModel);
 
     emit(CategoriaState.sucesso(mensagem: 'Categoria salva com sucesso!'));
   }
@@ -96,7 +96,7 @@ class CategoriaCubit extends Cubit<CategoriaState> {
     emit(CategoriaState.completo());
   }
 
-  Future<void> alterarStatus(CategoriaEntity item) async {
+  Future<void> alterarStatus(CategoriaModel item) async {
     emit(CategoriaState.carregando());
     item.ativo = !item.ativo!;
 

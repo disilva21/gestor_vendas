@@ -65,7 +65,7 @@ dev_dependencies:
   flutter_lints: ^3.0.0
 
 objectbox:
-  output_dir: database_gestor
+  output_dir: db_gestor
 
 flutter:
   uses-material-design: true

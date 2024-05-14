@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gestor_vendas/database_gestor/object_box_database.dart';
+import 'package:gestor_vendas/db_gestor/object_box_database.dart';
 
 import 'package:objectbox/objectbox.dart';
 
@@ -11,17 +11,17 @@ class ProdutoService extends ChangeNotifier {
 
   Future<Box> getBox() async {
     final store = await _database!.getStore();
-    return store.box<ProdutoEntity>();
+    return store.box<ProdutoModel>();
   }
 
-  Future<void> cadastrar(ProdutoEntity produto) async {
+  Future<void> cadastrar(ProdutoModel produto) async {
     try {
       final box = await getBox();
       box.put(produto);
     } catch (e) {}
   }
 
-  Future<void> editar(ProdutoEntity produto) async {
+  Future<void> editar(ProdutoModel produto) async {
     try {
       final box = await getBox();
       box.put(produto);
@@ -35,28 +35,28 @@ class ProdutoService extends ChangeNotifier {
     } catch (e) {}
   }
 
-  Future<List<ProdutoEntity>> carregarProdutos() async {
+  Future<List<ProdutoModel>> carregarProdutos() async {
     final box = await getBox();
 
-    return box.getAll() as List<ProdutoEntity>;
+    return box.getAll() as List<ProdutoModel>;
   }
 
-  alterarStatus(ProdutoEntity item) async {
+  alterarStatus(ProdutoModel item) async {
     final box = await getBox();
 
     box.put(item);
   }
 
-  Future<ProdutoEntity> lerProduto(int? idProduto) async {
+  Future<ProdutoModel> lerProduto(int? idProduto) async {
     final box = await getBox();
 
-    return box.get(idProduto!) as ProdutoEntity;
+    return box.get(idProduto!) as ProdutoModel;
   }
 
   Future<void> baixarQuantidadeEstoque(int? idProduto, int quantidade) async {
     try {
       final box = await getBox();
-      ProdutoEntity prod = box.get(idProduto!);
+      ProdutoModel prod = box.get(idProduto!);
       prod.quantidadeEstoque = prod.quantidadeEstoque! - quantidade;
 
       box.put(prod);

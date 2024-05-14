@@ -7,9 +7,9 @@ import 'package:objectbox/objectbox.dart';
 import '../enum/unidade_medida.dart';
 
 @Entity()
-class ProdutoEntity {
+class ProdutoModel {
   int id = 0;
-  final categoria = ToOne<CategoriaEntity>();
+  final categoria = ToOne<CategoriaModel>();
   int? idCategoria;
   String? nomeCategoria;
   String? nome;
@@ -33,7 +33,7 @@ class ProdutoEntity {
 
   String get dateFormat => DateFormat('dd.MM.yyyy hh:mm:ss').format(deleteDate!);
 
-  ProdutoEntity({
+  ProdutoModel({
     this.nome,
     this.ativo,
     this.imagem,

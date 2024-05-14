@@ -21,21 +21,21 @@ class RelatorioCubit extends Cubit<RelatorioState> {
   BuildContext _context;
   RelatorioCubit(this._context) : super(RelatorioState());
 
-  RelatorioEntity relatorioEntity = RelatorioEntity();
+  RelatorioModel relatorioModel = RelatorioModel();
 
-  List<RelatorioEntity> lista = [];
-  List<RelatorioEntity> listaFiltro = [];
+  List<RelatorioModel> lista = [];
+  List<RelatorioModel> listaFiltro = [];
 
-  List<Pedido> listaAll = [];
-  List<Pedido> listaNovosPedidos = [];
-  List<Pedido> listaEmPreparacao = [];
-  List<Pedido> listaFinalizados = [];
-  List<Pedido> listaNaEntrega = [];
-  List<Pedido> listaEntregues = [];
-  List<Pedido> listaCancelados = [];
+  List<PedidoModel> listaAll = [];
+  List<PedidoModel> listaNovosPedidos = [];
+  List<PedidoModel> listaEmPreparacao = [];
+  List<PedidoModel> listaFinalizados = [];
+  List<PedidoModel> listaNaEntrega = [];
+  List<PedidoModel> listaEntregues = [];
+  List<PedidoModel> listaCancelados = [];
 
   List<SalesData> listaSalesData = [];
-  List<Pedido> listFiltroDia = [];
+  List<PedidoModel> listFiltroDia = [];
   List<PieDataProduto> listaPieDataProduto = [];
 
   String id = '';
@@ -56,13 +56,13 @@ class RelatorioCubit extends Cubit<RelatorioState> {
       listaAll[i].itens = await _context.read<ItemPedidoService>().carregarItensPedidos(listaAll[i].id);
 
       if (listaAll[i].idCliente == 0) {
-        listaAll[i].cliente = Cliente(nome: 'Anônimo', telefone: '-');
+        listaAll[i].cliente = ClienteModel(nome: 'Anônimo', telefone: '-');
       } else {
         listaAll[i].cliente = await _context.read<ClienteService>().ler(listaAll[i].idCliente!);
       }
 
       if (listaAll[i].idFormaPagamento == 0) {
-        listaAll[i].formaPagamento = FormaPagamento(nome: '-');
+        listaAll[i].formaPagamento = FormaPagamentoModel(nome: '-');
       } else {
         listaAll[i].formaPagamento = await _context.read<FormaPagamentoService>().ler(listaAll[i].idFormaPagamento!);
       }
@@ -126,7 +126,7 @@ class RelatorioCubit extends Cubit<RelatorioState> {
   }
 
   Future<void> filtroVendasMes(String mes) async {
-    List<Pedido> dataMes = listaAll.where((e) => DateFormat.MMMM('pt').format(e.dataCadastro!) == mes).toList();
+    List<PedidoModel> dataMes = listaAll.where((e) => DateFormat.MMMM('pt').format(e.dataCadastro!) == mes).toList();
 
     totalVenda = 0;
     totalTaxaEntrega = 0;
@@ -140,7 +140,7 @@ class RelatorioCubit extends Cubit<RelatorioState> {
   num totalVenda = 0;
   num totalTaxaEntrega = 0;
   num qtdVendas = 0;
-  List<ProdutoEntity> listaProdutos = [];
+  List<ProdutoModel> listaProdutos = [];
   List<PieDataProduto> listaPieDataProdutoAux = [];
 
   Future<void> graficoTotalVenda() async {
@@ -157,7 +157,7 @@ class RelatorioCubit extends Cubit<RelatorioState> {
     listaProdutosMaisVendidos();
   }
 
-  List<ProdutoEntity> listaProdutosAux = [];
+  List<ProdutoModel> listaProdutosAux = [];
   List<PieDataProduto> listaAllFiltroMes = [];
   void listaProdutosMaisVendidos({String? mes}) {
     if (mes != null) {

@@ -1,11 +1,11 @@
-class RelatorioEntity {
+class RelatorioModel {
   String? id;
   String? nome;
   bool? ativo = false;
   String? imagem;
   DateTime? deleteDate;
 
-  RelatorioEntity({
+  RelatorioModel({
     this.id,
     this.nome,
     this.ativo,
@@ -13,8 +13,8 @@ class RelatorioEntity {
     this.deleteDate,
   });
 
-  factory RelatorioEntity.fromMap(dynamic data, String id) {
-    return RelatorioEntity(
+  factory RelatorioModel.fromMap(dynamic data, String id) {
+    return RelatorioModel(
       id: id.isEmpty
           ? data!['id'] == null
               ? null

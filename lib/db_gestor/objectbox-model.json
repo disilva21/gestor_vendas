@@ -1,0 +1,295 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:9185455745815282745",
+      "lastPropertyId": "7:265945025365681321",
+      "name": "CategoriaModel",
+      "properties": [
+        {
+          "id": "1:8900363844731378108",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:7674357708478013176",
+          "name": "nome",
+          "type": 9
+        },
+        {
+          "id": "3:2767973150370165911",
+          "name": "descricao",
+          "type": 9
+        },
+        {
+          "id": "4:3824386509437925503",
+          "name": "ativo",
+          "type": 1
+        },
+        {
+          "id": "5:7074595076143231225",
+          "name": "dataCadastro",
+          "type": 10
+        },
+        {
+          "id": "6:9173428223486753521",
+          "name": "orderm",
+          "type": 6
+        },
+        {
+          "id": "7:265945025365681321",
+          "name": "selecionado",
+          "type": 1
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:8605176877089249792",
+      "lastPropertyId": "3:4944447396049620558",
+      "name": "ClienteModel",
+      "properties": [
+        {
+          "id": "1:8506094534563188364",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:4724661479626831300",
+          "name": "nome",
+          "type": 9
+        },
+        {
+          "id": "3:4944447396049620558",
+          "name": "telefone",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "3:443684921550099873",
+      "lastPropertyId": "3:7790703724406662523",
+      "name": "FormaPagamentoModel",
+      "properties": [
+        {
+          "id": "1:94431818940089172",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:6636291529164489402",
+          "name": "nome",
+          "type": 9
+        },
+        {
+          "id": "3:7790703724406662523",
+          "name": "ativo",
+          "type": 1
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "4:3865655963736353949",
+      "lastPropertyId": "5:9136301337002026745",
+      "name": "ItemPedidoModel",
+      "properties": [
+        {
+          "id": "1:960499540883707444",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:7737193618765840827",
+          "name": "idProduto",
+          "type": 6
+        },
+        {
+          "id": "3:1274580817739476143",
+          "name": "idPedido",
+          "type": 6
+        },
+        {
+          "id": "4:423031224077334156",
+          "name": "quantidade",
+          "type": 6
+        },
+        {
+          "id": "5:9136301337002026745",
+          "name": "valorVenda",
+          "type": 8
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "5:6749158986655329841",
+      "lastPropertyId": "8:8084655516871061649",
+      "name": "PedidoModel",
+      "properties": [
+        {
+          "id": "1:8116648041191311783",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:4804162706971470298",
+          "name": "idCliente",
+          "type": 6
+        },
+        {
+          "id": "3:6364461302079968231",
+          "name": "descricao",
+          "type": 9
+        },
+        {
+          "id": "4:1018008068644428906",
+          "name": "idFormaPagamento",
+          "type": 6
+        },
+        {
+          "id": "5:4397779794373870483",
+          "name": "jaPagou",
+          "type": 1
+        },
+        {
+          "id": "6:2397376695767908577",
+          "name": "total",
+          "type": 8
+        },
+        {
+          "id": "7:1051491416829640620",
+          "name": "statusPedido",
+          "type": 6
+        },
+        {
+          "id": "8:8084655516871061649",
+          "name": "dataCadastro",
+          "type": 10
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "6:7115508599536990606",
+      "lastPropertyId": "18:3968137506939182866",
+      "name": "ProdutoModel",
+      "properties": [
+        {
+          "id": "1:4020732551371702882",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:727854882523749886",
+          "name": "categoriaId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "1:2646899867134897567",
+          "relationTarget": "CategoriaModel"
+        },
+        {
+          "id": "3:4822233370632839229",
+          "name": "idCategoria",
+          "type": 6
+        },
+        {
+          "id": "4:2221524399721809073",
+          "name": "nomeCategoria",
+          "type": 9
+        },
+        {
+          "id": "5:3306781925355371315",
+          "name": "nome",
+          "type": 9
+        },
+        {
+          "id": "6:349917040528074156",
+          "name": "descricao",
+          "type": 9
+        },
+        {
+          "id": "7:1538152594602902608",
+          "name": "ativo",
+          "type": 1
+        },
+        {
+          "id": "8:1174734369494260109",
+          "name": "imagem",
+          "type": 9
+        },
+        {
+          "id": "9:7680354262414369302",
+          "name": "deleteDate",
+          "type": 10
+        },
+        {
+          "id": "10:5700796951498078497",
+          "name": "valorVenda",
+          "type": 8
+        },
+        {
+          "id": "11:7484517020395845251",
+          "name": "valorCusto",
+          "type": 8
+        },
+        {
+          "id": "12:2802502575671879031",
+          "name": "codigo",
+          "type": 6
+        },
+        {
+          "id": "13:6908301578429978960",
+          "name": "quantidadeEstoque",
+          "type": 6
+        },
+        {
+          "id": "14:5172883721791138236",
+          "name": "observacao",
+          "type": 9
+        },
+        {
+          "id": "15:1828051948292223395",
+          "name": "quantidadeItem",
+          "type": 6
+        },
+        {
+          "id": "16:2091850587193858122",
+          "name": "unidadeMedida",
+          "type": 6
+        },
+        {
+          "id": "17:4535805124222506142",
+          "name": "quantidadePeso",
+          "type": 6
+        },
+        {
+          "id": "18:3968137506939182866",
+          "name": "quantidadeVenda",
+          "type": 6
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "6:7115508599536990606",
+  "lastIndexId": "1:2646899867134897567",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [],
+  "version": 1
+}

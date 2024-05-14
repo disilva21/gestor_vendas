@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gestor_vendas/database_gestor/object_box_database.dart';
+import 'package:gestor_vendas/db_gestor/object_box_database.dart';
 
 import 'package:gestor_vendas/novo_pedido/domain/entities/pedido.dart';
 import 'package:objectbox/objectbox.dart';
@@ -10,10 +10,10 @@ class PedidoService extends ChangeNotifier {
   late final ObjectBoxDatabase? _database;
   Future<Box> getBox() async {
     final store = await _database!.getStore();
-    return store.box<Pedido>();
+    return store.box<PedidoModel>();
   }
 
-  Future cadastrar(Pedido pedido) async {
+  Future cadastrar(PedidoModel pedido) async {
     try {
       final box = await getBox();
       box.put(pedido);
@@ -27,16 +27,16 @@ class PedidoService extends ChangeNotifier {
     box.remove(idPedido);
   }
 
-  Future<List<Pedido>> carregarPedidos() async {
+  Future<List<PedidoModel>> carregarPedidos() async {
     final box = await getBox();
 
-    return box.getAll() as List<Pedido>;
+    return box.getAll() as List<PedidoModel>;
   }
 
   Future alterarStatusPedido(int status, int id) async {
     try {
       final box = await getBox();
-      Pedido ped = box.get(id);
+      PedidoModel ped = box.get(id);
 
       ped.statusPedido = status;
 

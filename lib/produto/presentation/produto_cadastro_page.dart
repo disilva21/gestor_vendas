@@ -54,7 +54,7 @@ class _ProdutoCadastroPageState extends State<ProdutoCadastroScreen> {
   Uint8List? imageUint8List;
 
   final GlobalKey<FormState> _formProdutoKey = GlobalKey<FormState>();
-  CategoriaEntity? categoriaEntitySelect;
+  CategoriaModel? categoriaModelSelect;
 
   @override
   void initState() {
@@ -129,14 +129,14 @@ class _ProdutoCadastroPageState extends State<ProdutoCadastroScreen> {
                                   ),
                               dropdownColor: Colors.white,
                               value: categoriaIdSelected,
-                              items: _cubit.categorias.map((CategoriaEntity e) {
+                              items: _cubit.categorias.map((CategoriaModel e) {
                                 return DropdownMenuItem<int>(value: e.id, child: Text(e.nome!));
                               }).toList(),
                               onChanged: (int? newValue) {
                                 setState(() {
                                   categoriaIdSelected = newValue;
                                   categoriaDescSelected = _cubit.categorias.firstWhere((element) => element.id == categoriaIdSelected!).nome;
-                                  categoriaEntitySelect = _cubit.categorias.firstWhere((element) => element.id == categoriaIdSelected!);
+                                  categoriaModelSelect = _cubit.categorias.firstWhere((element) => element.id == categoriaIdSelected!);
                                 });
                               },
                             ),
@@ -326,7 +326,7 @@ class _ProdutoCadastroPageState extends State<ProdutoCadastroScreen> {
                         controlAffinity: ListTileControlAffinity.leading,
                         value: status,
                         onChanged: (value) {
-                          _cubit.produtoEntity.ativo = value;
+                          _cubit.produtoModel.ativo = value;
                           setState(() {
                             status = value!;
                           });
@@ -341,14 +341,14 @@ class _ProdutoCadastroPageState extends State<ProdutoCadastroScreen> {
                     //   child: Padding(
                     //     padding: const EdgeInsets.all(5),
                     //     child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                    //       if (_cubit.fileUint8List != null || _cubit.produtoEntity.imagem != null)
+                    //       if (_cubit.fileUint8List != null || _cubit.produtoModel.imagem != null)
                     //         Container(
                     //           alignment: Alignment.center,
                     //           width: double.infinity,
                     //           height: 100,
-                    //           child: _cubit.produtoEntity.imagem != null ? readImage(_cubit.produtoEntity.imagem) : Image.memory(_cubit.fileUint8List!),
+                    //           child: _cubit.produtoModel.imagem != null ? readImage(_cubit.produtoModel.imagem) : Image.memory(_cubit.fileUint8List!),
                     //         ),
-                    //       if (_cubit.fileUint8List == null && _cubit.produtoEntity.imagem == null)
+                    //       if (_cubit.fileUint8List == null && _cubit.produtoModel.imagem == null)
                     //         Container(
                     //           decoration: BoxDecoration(border: Border.all(width: 1, color: Colors.blue)),
                     //           child: TextButton(
@@ -364,7 +364,7 @@ class _ProdutoCadastroPageState extends State<ProdutoCadastroScreen> {
                     //           ),
                     //         ),
                     //       SizedBox(height: 15),
-                    //       if (_cubit.fileUint8List != null || _cubit.produtoEntity.imagem != null)
+                    //       if (_cubit.fileUint8List != null || _cubit.produtoModel.imagem != null)
                     //         TextButton.icon(
                     //           // style: ElevatedButton.styleFrom(
                     //           //   backgroundColor: Colors.red,
@@ -384,7 +384,7 @@ class _ProdutoCadastroPageState extends State<ProdutoCadastroScreen> {
                     //             setState(() {
                     //               _cubit.fileUint8List = null;
 
-                    //               _cubit.produtoEntity.imagem = null;
+                    //               _cubit.produtoModel.imagem = null;
                     //             });
                     //           },
                     //         ),
@@ -418,18 +418,18 @@ class _ProdutoCadastroPageState extends State<ProdutoCadastroScreen> {
                         onPressed: _formProdutoKey.currentState == null || !_formProdutoKey.currentState!.validate() || categoriaIdSelected == null
                             ? null
                             : () {
-                                _cubit.produtoEntity.nome = nome.text;
-                                _cubit.produtoEntity.descricao = descricao.text;
-                                _cubit.produtoEntity.valorVenda = valorVendaFormatter.numberValue;
-                                _cubit.produtoEntity.valorCusto = valorCustoFormatter.numberValue;
-                                _cubit.produtoEntity.codigo = codigo.text.isNotEmpty ? int.parse(codigo.text) : 0;
-                                _cubit.produtoEntity.quantidadeEstoque = quantidade_estoque.text.isNotEmpty ? int.parse(quantidade_estoque.text) : null;
+                                _cubit.produtoModel.nome = nome.text;
+                                _cubit.produtoModel.descricao = descricao.text;
+                                _cubit.produtoModel.valorVenda = valorVendaFormatter.numberValue;
+                                _cubit.produtoModel.valorCusto = valorCustoFormatter.numberValue;
+                                _cubit.produtoModel.codigo = codigo.text.isNotEmpty ? int.parse(codigo.text) : 0;
+                                _cubit.produtoModel.quantidadeEstoque = quantidade_estoque.text.isNotEmpty ? int.parse(quantidade_estoque.text) : null;
 
-                                _cubit.produtoEntity.unidadeMedida = unidadeMedidaSelecionado;
+                                _cubit.produtoModel.unidadeMedida = unidadeMedidaSelecionado;
 
-                                _cubit.produtoEntity.categoria.targetId = categoriaIdSelected;
-                                _cubit.produtoEntity.idCategoria = categoriaIdSelected;
-                                _cubit.produtoEntity.ativo = status;
+                                _cubit.produtoModel.categoria.targetId = categoriaIdSelected;
+                                _cubit.produtoModel.idCategoria = categoriaIdSelected;
+                                _cubit.produtoModel.ativo = status;
                                 if (_cubit.id != null) {
                                   _cubit.editar();
                                 } else {
@@ -450,20 +450,20 @@ class _ProdutoCadastroPageState extends State<ProdutoCadastroScreen> {
   }
 
   void load_cadastro() {
-    if (_cubit.produtoEntity.id != null && _cubit.produtoEntity.id > 0) {
-      nome.text = _cubit.produtoEntity.nome!;
-      valorVendaFormatter.updateValue(_cubit.produtoEntity.valorVenda);
-      valorCustoFormatter.updateValue(_cubit.produtoEntity.valorCusto);
-      codigo.text = _cubit.produtoEntity.codigo == null ? '0' : _cubit.produtoEntity.codigo.toString();
-      quantidade_estoque.text = _cubit.produtoEntity.quantidadeEstoque != null ? _cubit.produtoEntity.quantidadeEstoque.toString() : '0';
-      categoriaIdSelected = _cubit.produtoEntity.idCategoria;
-      descricao.text = _cubit.produtoEntity.descricao!;
-      status = _cubit.produtoEntity.ativo!;
+    if (_cubit.produtoModel.id != null && _cubit.produtoModel.id > 0) {
+      nome.text = _cubit.produtoModel.nome!;
+      valorVendaFormatter.updateValue(_cubit.produtoModel.valorVenda);
+      valorCustoFormatter.updateValue(_cubit.produtoModel.valorCusto);
+      codigo.text = _cubit.produtoModel.codigo == null ? '0' : _cubit.produtoModel.codigo.toString();
+      quantidade_estoque.text = _cubit.produtoModel.quantidadeEstoque != null ? _cubit.produtoModel.quantidadeEstoque.toString() : '0';
+      categoriaIdSelected = _cubit.produtoModel.idCategoria;
+      descricao.text = _cubit.produtoModel.descricao!;
+      status = _cubit.produtoModel.ativo!;
 
-      unidadeMedidaSelecionado = _cubit.produtoEntity.unidadeMedida;
+      unidadeMedidaSelecionado = _cubit.produtoModel.unidadeMedida;
 
-      _cubit.produtoEntity.ativo = _cubit.produtoEntity.ativo!;
-      _cubit.id = _cubit.produtoEntity.id;
+      _cubit.produtoModel.ativo = _cubit.produtoModel.ativo!;
+      _cubit.id = _cubit.produtoModel.id;
 
       // Future.delayed(Duration(milliseconds: 500));
     } else {
@@ -485,8 +485,8 @@ class _ProdutoCadastroPageState extends State<ProdutoCadastroScreen> {
     _cubit.downloadedUrl = '';
 
     _cubit.fileUint8List = null;
-    _cubit.produtoEntity = ProdutoEntity();
-    _cubit.produtoEntity.ativo = true;
+    _cubit.produtoModel = ProdutoModel();
+    _cubit.produtoModel.ativo = true;
 
     temObrigatorio = false;
     temEscolha = false;
@@ -495,7 +495,7 @@ class _ProdutoCadastroPageState extends State<ProdutoCadastroScreen> {
     unidadeMedidaSelecionado = null;
     setState(() {});
 
-    //_cubit.produtoEntity.enumUnidadeMedida = EnumUnidadeMedida.massa;
+    //_cubit.produtoModel.enumUnidadeMedida = EnumUnidadeMedida.massa;
   }
 
   Future<void> _pickImage() async {

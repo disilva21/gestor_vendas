@@ -5,16 +5,16 @@ import 'package:objectbox/objectbox.dart';
 import 'package:intl/intl.dart';
 
 @Entity()
-class Pedido {
+class PedidoModel {
   int id = 0;
   int? idCliente;
   @Transient()
-  Cliente? cliente;
+  ClienteModel? cliente;
   String? descricao;
   @Transient()
-  List<ItemPedido>? itens;
+  List<ItemPedidoModel>? itens;
   @Transient()
-  FormaPagamento? formaPagamento;
+  FormaPagamentoModel? formaPagamento;
   int? idFormaPagamento;
   bool? jaPagou = false;
   double total = 0;
@@ -23,7 +23,7 @@ class Pedido {
   @Property(type: PropertyType.date)
   DateTime? dataCadastro = DateTime.now();
 
-  Pedido({
+  PedidoModel({
     this.idCliente,
     this.descricao,
     this.itens,

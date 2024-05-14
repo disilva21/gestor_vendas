@@ -18,10 +18,10 @@ import '../../../../util/validar_celular.dart';
 class PedidoCubit extends Cubit<PedidoState> {
   BuildContext _context;
   PedidoCubit(this._context) : super(PedidoState());
-  Pedido pedidoEntity = Pedido();
+  PedidoModel pedidoEntity = PedidoModel();
 
-  List<Pedido> lista = [];
-  List<Pedido> listaFiltro = [];
+  List<PedidoModel> lista = [];
+  List<PedidoModel> listaFiltro = [];
   String id = '';
 
   List<DateTime?> dialogCalendarPickerValue = [];
@@ -67,19 +67,22 @@ class PedidoCubit extends Cubit<PedidoState> {
     dataFinal = DateTime(dataInicio.year, dataInicio.month + 1, 0);
 
     //lista = await _context.read<PedidoService>().carregarPedidos(inicio: dataInicio, fim: dataFinal);
+
     lista = await _context.read<PedidoService>().carregarPedidos();
 
     for (var i = 0; i < lista.length; i++) {
+      // await _context.read<PedidoService>().deletar(lista[i].id);
+
       lista[i].itens = await _context.read<ItemPedidoService>().carregarItensPedidos(lista[i].id);
 
       if (lista[i].idCliente == 0) {
-        lista[i].cliente = Cliente(nome: 'Anônimo', telefone: '-');
+        lista[i].cliente = ClienteModel(nome: 'Anônimo', telefone: '-');
       } else {
         lista[i].cliente = await _context.read<ClienteService>().ler(lista[i].idCliente!);
       }
 
       if (lista[i].idFormaPagamento == 0) {
-        lista[i].formaPagamento = FormaPagamento(nome: '-');
+        lista[i].formaPagamento = FormaPagamentoModel(nome: '-');
       } else {
         lista[i].formaPagamento = await _context.read<FormaPagamentoService>().ler(lista[i].idFormaPagamento!);
       }
@@ -97,6 +100,7 @@ class PedidoCubit extends Cubit<PedidoState> {
     listaFiltro.sort((a, b) => b.id.compareTo(a.id));
     await unidadeMedidas();
     await searchData();
+
     emit(PedidoState.completo());
   }
 

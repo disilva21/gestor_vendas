@@ -50,9 +50,9 @@ class _NovoPedidoScreenState extends State<NovoPedidoScreen> with SingleTickerPr
   bool status = true;
   bool addSabores = false;
   int? qtdSelecionado = 1;
-  FormaPagamento? pagamentoSelected;
+  FormaPagamentoModel? pagamentoSelected;
   String? pagamentoDescSelected;
-  CategoriaEntity? categoriaIdSelected;
+  CategoriaModel? categoriaIdSelected;
 
   late AnimationController controller;
 
@@ -191,9 +191,9 @@ class _NovoPedidoScreenState extends State<NovoPedidoScreen> with SingleTickerPr
 
                                 if (data == true) {
                                   await _printReceiveTest(theme, _cubit.pedido);
-                                  _cubit.pedido = Pedido();
+                                  _cubit.pedido = PedidoModel();
                                 } else {
-                                  _cubit.pedido = Pedido();
+                                  _cubit.pedido = PedidoModel();
                                   pagamentoSelected = null;
                                 }
                                 setState(() {});
@@ -416,7 +416,7 @@ class _NovoPedidoScreenState extends State<NovoPedidoScreen> with SingleTickerPr
                                                         padding: const EdgeInsets.all(12.0),
                                                         child: Column(
                                                           children: [
-                                                            DropdownButtonFormField<FormaPagamento>(
+                                                            DropdownButtonFormField<FormaPagamentoModel>(
                                                               decoration: InputDecoration(
                                                                   enabledBorder: OutlineInputBorder(
                                                                     borderSide: BorderSide(color: Colors.grey[300]!, width: 1),
@@ -433,10 +433,10 @@ class _NovoPedidoScreenState extends State<NovoPedidoScreen> with SingleTickerPr
                                                                   ),
                                                               dropdownColor: Colors.white,
                                                               value: pagamentoSelected,
-                                                              items: _cubit.formaPagamentos.map((FormaPagamento e) {
-                                                                return DropdownMenuItem<FormaPagamento>(value: e, child: Text(e.nome!));
+                                                              items: _cubit.formaPagamentos.map((FormaPagamentoModel e) {
+                                                                return DropdownMenuItem<FormaPagamentoModel>(value: e, child: Text(e.nome!));
                                                               }).toList(),
-                                                              onChanged: (FormaPagamento? newValue) {
+                                                              onChanged: (FormaPagamentoModel? newValue) {
                                                                 setState(() {
                                                                   pagamentoSelected = newValue;
                                                                   pagamentoDescSelected = newValue!.nome; //_cubit.formaPagamentos.firstWhere((element) => element.id == pagamentoSelected!).nome;
@@ -513,7 +513,7 @@ class _NovoPedidoScreenState extends State<NovoPedidoScreen> with SingleTickerPr
                                                       flex: 2,
                                                       child: SizedBox(
                                                         height: 80,
-                                                        child: DropdownButtonFormField<CategoriaEntity>(
+                                                        child: DropdownButtonFormField<CategoriaModel>(
                                                           decoration: InputDecoration(
                                                               enabledBorder: OutlineInputBorder(
                                                                 borderSide: BorderSide(color: Colors.grey[300]!, width: 1),
@@ -530,10 +530,10 @@ class _NovoPedidoScreenState extends State<NovoPedidoScreen> with SingleTickerPr
                                                               ),
                                                           dropdownColor: Colors.white,
                                                           value: categoriaIdSelected,
-                                                          items: _cubit.categoriasProduto.map((CategoriaEntity e) {
-                                                            return DropdownMenuItem<CategoriaEntity>(value: e, child: Text(e.nome!));
+                                                          items: _cubit.categoriasProduto.map((CategoriaModel e) {
+                                                            return DropdownMenuItem<CategoriaModel>(value: e, child: Text(e.nome!));
                                                           }).toList(),
-                                                          onChanged: (CategoriaEntity? newValue) {
+                                                          onChanged: (CategoriaModel? newValue) {
                                                             setState(() {
                                                               categoriaIdSelected = newValue;
                                                               _cubit.filtroCategoria(newValue!);
@@ -584,7 +584,7 @@ class _NovoPedidoScreenState extends State<NovoPedidoScreen> with SingleTickerPr
                                                     itemBuilder: (context, index) {
                                                       String _imgUrl = '';
 
-                                                      ProdutoEntity prod = _cubit.produtosFiltro[index];
+                                                      ProdutoModel prod = _cubit.produtosFiltro[index];
 
                                                       return Container(
                                                         padding: const EdgeInsets.all(5),
@@ -705,7 +705,7 @@ class _NovoPedidoScreenState extends State<NovoPedidoScreen> with SingleTickerPr
     });
   }
 
-  Future _printReceiveTest(ThemeData theme, Pedido pedido) async {
+  Future _printReceiveTest(ThemeData theme, PedidoModel pedido) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final paperSizeShared = await prefs.getInt('paperSize');
     PaperSize paperSize = PaperSize.mm80;
@@ -1244,7 +1244,7 @@ class _NovoPedidoScreenState extends State<NovoPedidoScreen> with SingleTickerPr
                   onPressed: (nomeCompleto.text.isEmpty || nomeCompleto.text.length <= 2 || _celular == '')
                       ? null
                       : () async {
-                          _cubit.cliente ??= Cliente();
+                          _cubit.cliente ??= ClienteModel();
 
                           _cubit.cliente!.telefone = _celular;
                           _cubit.cliente!.nome = nomeCompleto.text;
