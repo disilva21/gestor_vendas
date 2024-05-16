@@ -3,5 +3,5 @@
     "editor.formatOnSave": true,
     "editor.formatOnPaste": true,
     "dart.lineLength": 200,
-    "cmake.sourceDirectory": "C:/Projetos/gestor_menu_mania-prod/windows"
+    "cmake.sourceDirectory": "C:/Projetos/gestor_vendas/windows"
 }
